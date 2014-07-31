@@ -3,7 +3,7 @@
   "description": "Silverstripe module allowing creation of a custom product catalog with products and categories that can be created via the admin and accessed via their own URL's (like more conventional page objects)",
     "type": "silverstripe-module",
     "homepage": "http://github.com/i-lateral/silverstripe-catalogue",
-    "keywords": ["silverstripe", "commerce", "ecommerce" "product", "category", "catalogue"],
+    "keywords": ["silverstripe", "commerce", "ecommerce", "product", "category", "catalogue"],
     "license": "BSD-3-Clause",
     "authors": [
         {
