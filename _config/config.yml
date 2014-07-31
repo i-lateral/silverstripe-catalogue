@@ -1,0 +1,12 @@
+SiteConfig:
+  extensions:
+    - CatalogueSiteConfigExtension
+Controller:
+  extensions:
+    - CatalogueControllerExtension
+Image:
+  extensions:
+    - CatalogueImageExtension
+LeftAndMain:
+  extensions:
+    - CatalogueLeftAndMainExtension

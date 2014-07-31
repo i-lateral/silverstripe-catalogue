@@ -1,0 +1,32 @@
+{
+  "name": "i-lateral/silverstripe-catalogue",
+  "description": "Silverstripe module allowing creation of a custom product catalog with products and categories that can be created via the admin and accessed via their own URL's (like more conventional page objects)",
+    "type": "silverstripe-module",
+    "homepage": "http://github.com/i-lateral/silverstripe-catalogue",
+    "keywords": ["silverstripe", "commerce", "ecommerce" "product", "category", "catalogue"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Morven Lewis-Everley",
+            "email": "morven@i-lateral.com"
+        }
+    ],
+    "support": {
+        "issues": "http://github.com/i-lateral/silverstripe-product-catalogue/issues"
+    },
+    "require": {
+        "silverstripe/framework": ">=3.1",
+        "ajshort/silverstripe-gridfieldextensions": "dev-master",
+        "colymba/gridfield-bulk-editing-tools": "dev-master",
+        "bummzack/sortablefile": "dev-master"
+    },
+    "suggest": {
+        "silverstripe/cms": "Add full content management support to your site",
+        "i-lateral/silverstripe-siteconfig": "Add site settings support",
+        "i-lateral/silverstripe-middleman": "Add CMS vars, such as menu, searchform, etc to your site",
+        "i-lateral/silverstripe-users": "Add user account management, login and registration"
+    },
+    "extra": {
+        "installer-name": "catalogue"
+    }
+}
