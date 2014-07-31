@@ -24,7 +24,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
     
     private static $db = array(
         "Title"             => "Varchar(255)",
-        "Price"             => "Decimal",
+        "Price"             => "Currency",
         "URLSegment"        => "Varchar",
         "Content"           => "HTMLText",
         "MetaDescription"   => "Text",
