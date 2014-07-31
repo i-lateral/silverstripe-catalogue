@@ -12,7 +12,7 @@
         }
     ],
     "support": {
-        "issues": "http://github.com/i-lateral/silverstripe-product-catalogue/issues"
+        "issues": "http://github.com/i-lateral/silverstripe-catalogue/issues"
     },
     "require": {
         "silverstripe/framework": ">=3.1",
