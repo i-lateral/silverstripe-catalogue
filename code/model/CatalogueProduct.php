@@ -67,6 +67,10 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         "Content",
         "MetaDescription"
     );
+    
+    private static $extensions = array(
+		"VersionedDataObject"
+	);
 
     private static $default_sort = '"Title" ASC';
     

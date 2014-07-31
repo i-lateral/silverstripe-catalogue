@@ -86,10 +86,12 @@ class CatalogueAdmin extends ModelAdmin {
 
             $field_config
                 ->removeComponentsByType('GridFieldPrintButton')
+                ->removeComponentsByType('GridFieldDetailForm')
                 ->removeComponentsByType('GridFieldAddNewButton')
                 ->addComponents(
                     $add_button,
-                    $manager
+                    $manager,
+                    new VersionedDataObjectDetailsForm()
                 );
 
             // Update list of items for subsite (if used)
