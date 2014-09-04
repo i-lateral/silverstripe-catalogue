@@ -9,23 +9,22 @@
 class CatalogueProductBulkAction extends GridFieldBulkActionHandler {
 
     private static $allowed_actions = array(
-        'enable',
-        'disable'
+        'publish',
+        'unpublish'
     );
 
     private static $url_handlers = array(
-        'enable' => 'enable',
-        'disable' => 'disable'
+        'publish' => 'publish',
+        'unpublish' => 'unpublish'
     );
 
-    public function enable(SS_HTTPRequest $request) {
+    public function publish(SS_HTTPRequest $request) {
         $ids = array();
 
         foreach($this->getRecords() as $record) {
             array_push($ids, $record->ID);
-
-            $record->Disabled = 0;
             $record->write();
+            $record->publish('Stage', 'Live');
         }
 
         $response = new SS_HTTPResponse(Convert::raw2json(array(
@@ -38,14 +37,13 @@ class CatalogueProductBulkAction extends GridFieldBulkActionHandler {
         return $response;
     }
 
-    public function disable(SS_HTTPRequest $request) {
+    public function unpublish(SS_HTTPRequest $request) {
         $ids = array();
 
         foreach($this->getRecords() as $record) {
             array_push($ids, $record->ID);
-
-            $record->Disabled = 1;
-            $record->write();
+            
+            $record->deleteFromStage('Live');
         }
 
         $response = new SS_HTTPResponse(Convert::raw2json(array(

@@ -24,6 +24,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
     
     private static $db = array(
         "Title"             => "Varchar(255)",
+        "StockID"           => "Varchar",
         "Price"             => "Currency",
         "URLSegment"        => "Varchar",
         "Content"           => "HTMLText",
@@ -67,10 +68,6 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         "Content",
         "MetaDescription"
     );
-    
-    private static $extensions = array(
-		"VersionedDataObject"
-	);
 
     private static $default_sort = '"Title" ASC';
     
@@ -451,22 +448,6 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
             $this->URLSegment = preg_replace('/-[0-9]+$/', null, $this->URLSegment) . '-' . $count;
             $count++;
         }
-
-        // If no images are set, add our default image (if it exists)
-        if(!$this->Images()->exists()) {
-			$config = SiteConfig::current_site_config();
-			if ($config->NoProductImageID){
-				$image = $config->NoProductImage();
-			} else {
-				$image = Image::get()
-					->filter('Name','no-image.png')
-					->first();
-			}
-
-            if($image) {
-                $this->Images()->add($image->ID);
-            }
-        }
     }
     
     public function providePermissions() {
@@ -509,7 +490,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         else if($memberID && $memberID == $this->CustomerID)
             return true;
 
-        return false;
+        return true;
     }
 
     public function canEdit($member = null) {
