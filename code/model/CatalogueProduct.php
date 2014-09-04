@@ -321,6 +321,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
                         HTMLEditorField::create('Content', $this->fieldLabel('Content'))
                             ->setRows(20)
                             ->addExtraClass('stacked'),
+                        TreeMultiSelectField::create("Categories", null, "CatalogueCategory"),
                         ToggleCompositeField::create('Metadata', _t('CommerceAdmin.MetadataToggle', 'Metadata'),
                             array(
                                 $metaFieldDesc = TextareaField::create("MetaDescription", $this->fieldLabel('MetaDescription')),
