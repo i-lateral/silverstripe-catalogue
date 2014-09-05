@@ -223,9 +223,16 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
             ->setReadonly(true)
             ->performReadonlyTransformation();
 
+        $parent_field = TreeDropdownField::create(
+            'ParentID',
+            'Parent Category',
+            'CatalogueCategory'
+        )->setLabelField("Title");
+        
+        
         $gridconfig = new GridFieldConfig_RelationEditor();
         $gridconfig->addComponent(new GridFieldOrderableRows('SortOrder'));
-
+        
         $products_field = GridField::create(
             "Products",
             "",
@@ -233,18 +240,11 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
             $gridconfig
         );
 
-        $parent_field = TreeDropdownField::create(
-            'ParentID',
-            'Parent Category',
-            'CatalogueCategory'
-        )->setLabelField("Title");
-
         // Add fields to the CMS
         $fields->addFieldToTab('Root.Main', TextField::create('Title'));
         $fields->addFieldToTab('Root.Main', $url_field);
         $fields->addFieldToTab('Root.Main', $parent_field);
-        $fields->addFieldToTab("Root.Main", HeaderField::create("ProductsHeader", "Products in this category"));
-        $fields->addFieldToTab('Root.Main', $products_field);
+        $fields->addFieldToTab('Root.Products', $products_field);
 
         $this->extend('updateCMSFields', $fields);
 
