@@ -117,9 +117,9 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
 	 *
 	 * @return bool
 	 */
-	public function isSection() {
+	public function isSection() {        
 		return $this->isCurrent() || (
-			Director::get_current_page() && in_array($this->URLSegment, Director::get_current_page()->getAncestors()->column('URLSegment'))
+			method_exists(Director::get_current_page(), "getAncestors") && in_array($this->URLSegment, Director::get_current_page()->getAncestors()->column('URLSegment'))
 		);
 	}
 
