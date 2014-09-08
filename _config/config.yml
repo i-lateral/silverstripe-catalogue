@@ -1,3 +1,6 @@
+---
+Name: catalogueconfig
+---
 SiteConfig:
   extensions:
     - CatalogueSiteConfigExtension
