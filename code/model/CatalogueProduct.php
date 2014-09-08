@@ -318,6 +318,8 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
                         TextField::create("Title", $this->fieldLabel('Title')),
                         TextField::create("URLSegment", $this->fieldLabel('URLSegment')),
                         NumericField::create("Price", $this->fieldLabel('Price')),
+                        TextField::create("StockID", $this->fieldLabel('StockID'))
+                            ->setRightTitle(_t("Catalogue.StockIDHelp", "For example, a product SKU")),
                         HTMLEditorField::create('Content', $this->fieldLabel('Content'))
                             ->setRows(20)
                             ->addExtraClass('stacked'),
