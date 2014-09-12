@@ -93,7 +93,8 @@ class CatalogueProductController extends CatalogueController {
             $this,
             "Form",
             FieldList::create(),
-            FieldList::create()
+            FieldList::create(),
+            new RequiredFields(array())
         );
         
         $this->extend("updateForm", $form);
