@@ -11,7 +11,7 @@ class CatalogueProductController extends CatalogueController {
 
     private static $allowed_actions = array(
         'image',
-        'AddItemForm'
+        'Form'
     );
 
     /**
@@ -79,5 +79,25 @@ class CatalogueProductController extends CatalogueController {
             $image = $images->first();
 
         return $image;
+    }
+    
+    /**
+     * Create a form to associate with this product, by default it will
+     * be empty, but is intended to be easily extendable to allow "add
+     * item to cart", or "get a quote" functionality.
+     * 
+     * @return Form 
+     */
+    public function Form() {
+        $form = Form::create(
+            $this,
+            "Form",
+            FieldList::create(),
+            FieldList::create()
+        );
+        
+        $this->extend("updateForm", $form);
+        
+        return $form;
     }
 }
