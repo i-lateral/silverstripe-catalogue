@@ -277,25 +277,26 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
     }
 
     public function getCMSFields() {
+        // Get a list of available product classes
+        $classnames = ClassInfo::getValidSubClasses("CatalogueProduct");
+        $product_array = array();
+        
+        foreach($classnames as $classname) {
+            if($classname != "CatalogueProduct") {
+                $description = Config::inst()->get($classname, 'description');
+                
+                if($classname == 'Product' && !$description)
+                    $description = self::config()->description;
+                        
+                $description = ($description) ? $classname . ' - ' . $description : $classname; 
+                
+                $product_array[$classname] = $description;
+            }
+        }
+        
         
         // If we are creating a product, let us choose the product type
         if(!$this->ID) {
-            $classnames = ClassInfo::getValidSubClasses($this->ClassName);
-            $product_array = array();
-            
-            foreach($classnames as $classname) {
-                if($classname != "CatalogueProduct") {
-                    $description = Config::inst()->get($classname, 'description');
-                    
-                    if($classname == 'Product' && !$description)
-                        $description = self::config()->description;
-                            
-                    $description = ($description) ? $classname . ' - ' . $description : $classname; 
-                    
-                    $product_array[$classname] = $description;
-                }
-            }
-            
             $fields = new FieldList(
                 $rootTab = new TabSet("Root",
                     // Main Tab Fields
@@ -354,16 +355,26 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
                     )
                 )
                 ->addExtraClass('help');
-                
 
-            $related_field = GridField::create(
-                'RelatedProducts',
-                "",
-                $this->RelatedProducts(),
-                GridFieldConfig_RelationEditor::create()
+            $fields->addFieldToTab(
+                'Root.Related',
+                GridField::create(
+                    'RelatedProducts',
+                    "",
+                    $this->RelatedProducts(),
+                    GridFieldConfig_RelationEditor::create()
+                )
             );
-
-            $fields->addFieldToTab('Root.Related', $related_field);
+            
+            // Add settings field
+            $fields->addFieldToTab(
+                "Root.Settings",
+                DropdownField::create(
+                    "ClassName",
+                    _t("CatalogueAdmin.ProductType", "Type of product"),
+                    $product_array
+                )
+            );
         }
 
         $this->extend('updateCMSFields', $fields);
