@@ -59,13 +59,12 @@ class CatalogueCategoryController extends CatalogueController {
         $remove_classes = array(
             "Object",
             "ViewableData",
-            "DataObject",
-            "CatalogueCategory"
+            "DataObject"
         );
 
         $return = array();
 
-        array_push($classes, "Catalogue", "Page");
+        array_push($classes, "Category", "Catalogue", "Page");
 
         foreach($classes as $class) {
             if(!in_array($class, $remove_classes))
