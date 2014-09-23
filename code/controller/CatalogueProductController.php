@@ -46,10 +46,23 @@ class CatalogueProductController extends CatalogueController {
      */
     public function index() {
         $classes = ClassInfo::ancestry($this->dataRecord->class);
-        
+        $remove_classes = array(
+            "Object",
+            "ViewableData",
+            "DataObject",
+            "CatalogueProduct"
+        );
+
+        $return = array();
+
         array_push($classes, "Catalogue", "Page");
 
-        return $this->renderWith($classes);
+        foreach($classes as $class) {
+            if(!in_array($class, $remove_classes))
+                $return[] = $class;
+        }
+
+        return $this->renderWith($return);
     }
     
     /**
