@@ -58,7 +58,6 @@ class CatalogueAdmin extends ModelAdmin {
 
             // Bulk manager
             $manager = new GridFieldBulkManager();
-            $manager->removeBulkAction("unLink");
             $manager->removeBulkAction("delete");
 
             $manager->addBulkAction(
