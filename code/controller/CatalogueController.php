@@ -105,7 +105,7 @@ abstract class CatalogueController extends Controller {
         if(class_exists("Product")) {
             $products = Product::get()->filterAny(array(
                 "Title:PartialMatch" => $data["Search"],
-                "SKU" => $data["Search"],
+                "StockID" => $data["Search"],
                 "Description:PartialMatch" => $data["Search"]
             ));
 
