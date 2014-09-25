@@ -106,7 +106,7 @@ abstract class CatalogueController extends Controller {
             $products = Product::get()->filterAny(array(
                 "Title:PartialMatch" => $data["Search"],
                 "StockID" => $data["Search"],
-                "Description:PartialMatch" => $data["Search"]
+                "Content:PartialMatch" => $data["Search"]
             ));
 
             $results->merge($products);
