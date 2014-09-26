@@ -25,7 +25,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
     private static $db = array(
         "Title"             => "Varchar(255)",
         "StockID"           => "Varchar",
-        "Price"             => "Currency",
+        "BasePrice"         => "Currency",
         "URLSegment"        => "Varchar",
         "Content"           => "HTMLText",
         "MetaDescription"   => "Text",
@@ -49,16 +49,14 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         "MenuTitle"         => "Varchar",
         "CategoriesList"    => "Varchar",
         "CMSThumbnail"      => "Varchar",
-        "PriceWithTax"      => "Decimal",
-        "Tax"               => "Decimal",
-        "TaxName"           => "Varchar"
+        "Price"             => "Currency"
     );
 
     private static $summary_fields = array(
         "ID"            => "ID",
         "CMSThumbnail"  => "Thumbnail",
         "Title"         => "Title",
-        "Price"         => "Price",
+        "BasePrice"     => "Price",
         "CategoriesList"=> "Categories"
     );
 
@@ -70,6 +68,21 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
     );
 
     private static $default_sort = '"Title" ASC';
+    
+    /**
+     * Get a final price for this product. We make this a method so that
+     * we can tap into extensions and allow third party modules to alter
+     * this (to add items such as tax, bulk pricing, etc).
+     *
+     * @return Currency
+     */
+    public function Price() {
+        $price = $this->BasePrice;
+        
+        $this->extend("updatePrice", $price);
+        
+        return $price;
+    }
     
     
     /**
@@ -137,58 +150,6 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
     
     public function getMenuTitle() {
         return $this->Title;
-    }
-
-    /**
-     * Get the amount of tax that the base price of this product produces as a
-     * decimal.
-     *
-     * If tax is not set (or set to 0) then this returns 0.
-     *
-     * @return Decimal
-     */
-    public function getTax() {
-        $config = SiteConfig::current_site_config();
-        (float)$price = $this->Price;
-        (float)$rate = $config->TaxRate;
-
-        if($rate > 0)
-            (float)$tax = ($price / 100) * $rate; // Get our tax amount from the price
-        else
-            (float)$tax = 0;
-
-        return number_format($tax, 2);
-    }
-
-    /**
-     * The price for this product including the percentage cost of the tax
-     * (set in global config).
-     *
-     * This price is based on the tax rates set in the admin and whether or not
-     * the siteconfig is set to include tax or not.
-     *
-     * @return Decimal
-     */
-    public function getPriceWithTax() {
-        (float)$price = $this->Price;
-        (float)$tax = $this->Tax;
-
-        return number_format($price + $tax, 2);
-    }
-
-    /**
-     * Determine if we need to show the product price with or without tax, based
-     * on siteconfig
-     *
-     * @return Decimal
-     */
-    public function getFrontPrice() {
-        $config = SiteConfig::current_site_config();
-
-        if($config->TaxPriceInclude)
-            return $this->getPriceWithTax();
-        else
-            return $this->Price;
     }
 
     /**
@@ -312,15 +273,24 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
                 )
             );
         } else {
+            // If CMS Installed, use URLSegmentField, otherwise use text
+            // field for URL
+            if(class_exists('SiteTreeURLSegmentField')) {     
+                $baseLink = Controller::join_links (
+                    Director::absoluteBaseURL()
+                );
+                           
+                $url_field = SiteTreeURLSegmentField::create("URLSegment");
+                $url_field->setURLPrefix($baseLink);
+            } else
+                $url_field = TextField::create("URLSegment");
+            
             $fields = new FieldList(
                 $rootTab = new TabSet("Root",
                     // Main Tab Fields
                     $tabMain = new Tab('Main',
                         TextField::create("Title", $this->fieldLabel('Title')),
-                        TextField::create("URLSegment", $this->fieldLabel('URLSegment')),
-                        NumericField::create("Price", $this->fieldLabel('Price')),
-                        TextField::create("StockID", $this->fieldLabel('StockID'))
-                            ->setRightTitle(_t("Catalogue.StockIDHelp", "For example, a product SKU")),
+                        $url_field,
                         HTMLEditorField::create('Content', $this->fieldLabel('Content'))
                             ->setRows(20)
                             ->addExtraClass('stacked'),
@@ -331,6 +301,16 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
                                 $metaFieldExtra = TextareaField::create("ExtraMeta",$this->fieldLabel('ExtraMeta'))
                             )
                         )->setHeadingLevel(4)
+                    ),
+                    $tabSettings = new Tab('Settings',
+                        NumericField::create("BasePrice", _t("Catalogue.Price", "Price")),
+                        TextField::create("StockID", $this->fieldLabel('StockID'))
+                            ->setRightTitle(_t("Catalogue.StockIDHelp", "For example, a product SKU")),
+                        DropdownField::create(
+                            "ClassName",
+                            _t("CatalogueAdmin.ProductType", "Type of product"),
+                            $product_array
+                        )
                     ),
                     $tabImages = new Tab('Images',
                         SortableUploadField::create('Images', $this->fieldLabel('Images'), $this->Images())
@@ -365,16 +345,6 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
                     GridFieldConfig_RelationEditor::create()
                 )
             );
-            
-            // Add settings field
-            $fields->addFieldToTab(
-                "Root.Settings",
-                DropdownField::create(
-                    "ClassName",
-                    _t("CatalogueAdmin.ProductType", "Type of product"),
-                    $product_array
-                )
-            );
         }
 
         $this->extend('updateCMSFields', $fields);
@@ -383,7 +353,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
     }
 
     public function getCMSValidator() {
-        return new RequiredFields(array("Title","Price"));
+        return new RequiredFields(array("Title","StockID"));
     }
 
     /**
