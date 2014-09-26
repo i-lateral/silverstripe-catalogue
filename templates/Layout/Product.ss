@@ -29,8 +29,11 @@
                 <span class="price label big label-green">
                     <span class="title"><% _t('Catalogue.Price','Price') %>:</span>
                     <span class="value">
-                        {$Price.Nice}
+                        {$Price.nice}
                     </span>
+                </span>
+                <span class="tax"> 
+                    {$TaxString}
                 </span>
             </p>
 
@@ -61,7 +64,11 @@
                         </a>
 
                         <span class="price label label-green big">
-                            {$Price.Nice}
+                            {$Price.nice}
+                        </span>
+                        
+                        <span class="tax"> 
+                            {$TaxString}
                         </span>
                     </p>
                 </div>

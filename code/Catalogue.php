@@ -10,6 +10,15 @@
 class Catalogue extends ViewableData {
     
     /**
+     * Show price including tax in catalogue and product pages?
+     * 
+     * @var Boolean
+     * @config
+     */
+    private static $price_includes_tax = true;
+    
+    
+    /**
      * Gets a list of all Categories, either top level (default) or
      * from a sub level
      *

@@ -101,7 +101,6 @@ class CatalogueAdmin extends ModelAdmin {
 
                 $gridField->setList($list);
             }
-
         }
 
         $this->extend("updateEditForm", $form);

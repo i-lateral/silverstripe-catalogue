@@ -31,6 +31,10 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         "MetaDescription"   => "Text",
         "ExtraMeta"         => "HTMLText"
     );
+    
+    private static $has_one = array(
+        "TaxRate"           => "TaxRate"
+    );
 
     private static $many_many = array(
         "Images"            => "Image",
@@ -49,7 +53,9 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         "MenuTitle"         => "Varchar",
         "CategoriesList"    => "Varchar",
         "CMSThumbnail"      => "Varchar",
-        "Price"             => "Currency"
+        "Price"             => "Currency",
+        "Tax"               => "Currency",
+        "TaxString"         => "Varchar"
     );
 
     private static $summary_fields = array(
@@ -81,7 +87,46 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         
         $this->extend("updatePrice", $price);
         
-        return $price;
+        return (Catalogue::config()->price_includes_tax) ? $price + $this->Tax() : $price;
+    }
+    
+    /**
+     * Get a final tax amount for this product. You can extend this
+     * method using "UpdateTax" allowing third party modules to alter
+     * tax amounts dynamically.
+     *
+     * @return Currency
+     */
+    public function Tax() {
+        $price = $this->BasePrice;
+        
+        // If tax is enabled in config, add it to the final price
+        if($this->TaxRateID && $this->TaxRate()->Amount)
+            $tax = ($price / 100) * $this->TaxRate()->Amount;
+        else
+            $tax = 0;
+        
+        $this->extend("updateTax", $tax);
+        
+        return $tax;
+    }
+    
+    /**
+     * Generate a string to go with the the product price. We can
+     * overwrite the wording of this by using Silverstripes language
+     * files
+     *
+     * @return String
+     */
+    public function TaxString() {
+        if($this->TaxRateID && Catalogue::config()->price_includes_tax)
+            $return = _t("Catalogue.TaxIncludes", "Includes") . " " . $this->TaxRate()->Title;
+        elseif($this->TaxRateID && !Catalogue::config()->price_includes_tax)
+            $return = _t("Catalogue.TaxExcludes", "Excludes") . " " . $this->TaxRate()->Title;
+        else
+            $return = "";
+        
+        return $return;
     }
     
     
@@ -306,6 +351,11 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
                         NumericField::create("BasePrice", _t("Catalogue.Price", "Price")),
                         TextField::create("StockID", $this->fieldLabel('StockID'))
                             ->setRightTitle(_t("Catalogue.StockIDHelp", "For example, a product SKU")),
+                        DropdownField::create(
+                            "TaxRateID",
+                            $this->fieldLabel('TaxRate'),
+                            TaxRate::get()->map()
+                        )->setEmptyString(_t("Catalogue.None", "None")),
                         DropdownField::create(
                             "ClassName",
                             _t("CatalogueAdmin.ProductType", "Type of product"),

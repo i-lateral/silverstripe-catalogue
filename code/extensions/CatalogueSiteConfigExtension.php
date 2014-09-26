@@ -12,13 +12,34 @@ class CatalogueSiteConfigExtension extends DataExtension {
     );
 
     public function updateCMSFields(FieldList $fields) {
-        $product_image_field = UploadField::create(
-            'DefaultProductImage',
-            _t("ProductCatalogue.DefaultProductImage", 'Default product image')
-        );
-
         // Add config sets
-        $fields->addFieldToTab('Root.Main', $product_image_field);
+        $fields->addFieldToTab(
+            'Root.Catalogue',
+            UploadField::create(
+                'DefaultProductImage',
+                _t("Catalogue.DefaultProductImage", 'Default product image')
+            )
+        );
+        
+        // Add config sets
+        $fields->addFieldToTab(
+            'Root.Catalogue',
+            GridField::create(
+                'TaxRates',
+                _t("Catalogue.TaxRates", "Tax Rates"),
+                TaxRate::get(),
+                GridFieldConfig::create()->addComponents(
+                    new GridFieldToolbarHeader(),
+                    new GridFieldAddNewButton('toolbar-header-right'),
+                    new GridFieldSortableHeader(),
+                    new GridFieldDataColumns(),
+                    new GridFieldPaginator(5),
+                    new GridFieldEditButton(),
+                    new GridFieldDeleteAction(),
+                    new GridFieldDetailForm()
+                )
+            )
+        );
     }
     
 }

@@ -27,7 +27,11 @@
                         <a href="$Link">$SortedImages.First.CroppedImage(180,180)</a>
 
                         <span class="price label label-green big">
-                            {$Price.Nice}
+                            {$Price.nice}
+                        </span>
+                        
+                        <span class="tax"> 
+                            {$TaxString}
                         </span>
                     </p>
                 </div>
