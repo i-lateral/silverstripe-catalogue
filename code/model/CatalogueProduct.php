@@ -55,7 +55,9 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         "CMSThumbnail"      => "Varchar",
         "Price"             => "Currency",
         "Tax"               => "Currency",
-        "TaxString"         => "Varchar"
+        "PriceAndTax"       => "Currency",
+        "TaxString"         => "Varchar",
+        "IncludeTax"        => "Boolean"
     );
 
     private static $summary_fields = array(
@@ -76,6 +78,16 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
     private static $default_sort = '"Title" ASC';
     
     /**
+     * Method that allows us to define in templates if we should show
+     * price including tax, or excluding tax
+     * 
+     * @return boolean
+     */
+    public function IncludesTax() {
+        return Catalogue::config()->price_includes_tax;
+    }
+    
+    /**
      * Get a final price for this product. We make this a method so that
      * we can tap into extensions and allow third party modules to alter
      * this (to add items such as tax, bulk pricing, etc).
@@ -87,7 +99,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         
         $this->extend("updatePrice", $price);
         
-        return (Catalogue::config()->price_includes_tax) ? $price + $this->Tax() : $price;
+        return $price;
     }
     
     /**
@@ -109,6 +121,19 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         $this->extend("updateTax", $tax);
         
         return $tax;
+    }
+    
+    /**
+     * Get the final price of this product, including tax (if any)
+     *
+     * @return Currency
+     */
+    public function PriceAndTax() {
+        $price = $this->Price() + $this->Tax();
+        
+        $this->extend("updatePriceAndTax", $price);
+        
+        return $price;
     }
     
     /**

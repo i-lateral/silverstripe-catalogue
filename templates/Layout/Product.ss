@@ -29,11 +29,19 @@
                 <span class="price label big label-green">
                     <span class="title"><% _t('Catalogue.Price','Price') %>:</span>
                     <span class="value">
-                        {$Price.nice}
+                        <% if $IncludesTax %>
+                            {$PriceAndTax.nice}
+                        <% else %>
+                            {$Price.nice}
+                        <% end_if %>
                     </span>
                 </span>
                 <span class="tax"> 
-                    {$TaxString}
+                    <% if TaxString %>
+                        <span class="tax"> 
+                            {$TaxString}
+                        </span>
+                    <% end_if %>
                 </span>
             </p>
 
@@ -59,17 +67,21 @@
                     <h3><a href="$Link">$Title</a></h3>
 
                     <p>
-                        <a href="$Link">
-                            $SortedImages.First.CroppedImage(200,200)
-                        </a>
+                        <a href="$Link">$SortedImages.First.CroppedImage(180,180)</a>
 
                         <span class="price label label-green big">
-                            {$Price.nice}
+                            <% if $IncludesTax %>
+                                {$PriceAndTax.nice}
+                            <% else %>
+                                {$Price.nice}
+                            <% end_if %>
                         </span>
                         
-                        <span class="tax"> 
-                            {$TaxString}
-                        </span>
+                        <% if TaxString %>
+                            <span class="tax">
+                                {$TaxString}
+                            </span>
+                        <% end_if %>
                     </p>
                 </div>
 

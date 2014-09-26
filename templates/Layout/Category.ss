@@ -26,13 +26,19 @@
                     <p>
                         <a href="$Link">$SortedImages.First.CroppedImage(180,180)</a>
 
-                        <span class="price label label-green big">
-                            {$Price.nice}
+                        <span class="price label label-green big">                            
+                            <% if $IncludesTax %>
+                                {$PriceAndTax.nice}
+                            <% else %>
+                                {$Price.nice}
+                            <% end_if %>
                         </span>
                         
-                        <span class="tax"> 
-                            {$TaxString}
-                        </span>
+                        <% if TaxString %>
+                            <span class="tax"> 
+                                {$TaxString}
+                            </span>
+                        <% end_if %>
                     </p>
                 </div>
 
