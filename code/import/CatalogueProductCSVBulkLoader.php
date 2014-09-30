@@ -7,8 +7,22 @@
  * @package catalogue
  */
 class CatalogueProductCSVBulkLoader extends CsvBulkLoader {
+    
+    public $columnMap = array(
+        "Type"      => "ClassName",
+        "SKU"       => "StockID",
+        "Name"      => "Title",
+        "Price"     => "BasePrice",
+        "TaxPercent"=> '->importTaxPercent', 
+    );
 
-    function __construct($objectClass = null) {
+    public $duplicateChecks = array(
+        'ID'        => 'ID',
+        'SKU'       => 'StockID',
+        'StockID'   => 'StockID'
+    );
+
+    public function __construct($objectClass = null) {
         if(!$objectClass) $objectClass = 'Product';
 
         parent::__construct($objectClass);
@@ -21,25 +35,44 @@ class CatalogueProductCSVBulkLoader extends CsvBulkLoader {
         $objID = parent::processRecord($record, $columnMap, $results, $preview);
         $object = DataObject::get_by_id($this->objectClass, $objID);
 
-        $this->extend("onBeforeProcess", $record, $object);
+        $this->extend("onBeforeProcess", $object, $record, $columnMap, $results, $preview);
+        
+        // Loop through all fields and setup associations
+        foreach($record as $key => $value) {
 
-        // Get all categories by name
-        if(isset($record['Categories']) && $record['Categories']) {
-            $cat_names = explode(",",$record["Categories"]);
-            $categories = CatalogueCategory::get()
-                ->filter("Title", $cat_names);
+            // Find any categories (denoted by a 'CategoryXX' column)
+            if(strpos($key,'Category') !== false) {
+                $category = CatalogueCategory::get()
+                    ->filter("Title", $value)
+                    ->first();
 
-            foreach($categories as $category) {
-                $object->Categories()->add($category);
+                if($category) $object->Categories()->add($category);
+            }
+            
+            // Find any Images (denoted by a 'ImageXX' column)
+            if(strpos($key,'Image') !== false && $key != "Images") {
+                $image = Image::get()
+                    ->filter("Name", $value)
+                    ->first();
+
+                if($image) $object->Images()->add($image);
             }
         }
 
-        $this->extend("onAfterProcess", $record, $object);
+        $this->extend("onAfterProcess", $object, $record, $columnMap, $results, $preview);
 
         $object->destroy();
         unset($object);
 
         return $objID;
+    }
+    
+    public static function importTaxPercent(&$obj, $val, $record) {
+        $tax_rate = TaxRate::get()
+            ->filter("Amount", $val)
+            ->first();
+        
+        if($tax_rate) $obj->TaxRateID = $tax_rate->ID;
     }
 
 }

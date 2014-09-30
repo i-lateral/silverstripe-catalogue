@@ -29,6 +29,27 @@ class CatalogueAdmin extends ModelAdmin {
     public function init() {
         parent::init();
     }
+    
+    public function getExportFields() {
+        $fields = array(
+            "Title" => "Title",
+            "URLSegment" => "URLSegment"
+        );
+        
+        if($this->modelClass == 'CatalogueProduct') {
+            $fields["StockID"] = "StockID";
+            $fields["ClassName"] = "Type";
+            $fields["BasePrice"] = "Price";
+            $fields["TaxRate.Amount"] = "TaxPercent";
+            $fields["Images.first.Name"] = "Image1";
+            $fields["Categories.first.Title"] = "Category1";
+            $fields["Content"] = "Content";
+        }
+        
+        $this->extend("updateExportFields", $fields);
+        
+        return $fields;
+    }
 
     public function getList() {
         $list = parent::getList();
