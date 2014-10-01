@@ -17,7 +17,7 @@
     "require": {
         "silverstripe/framework": ">=3.1",
         "ajshort/silverstripe-gridfieldextensions": "*",
-        "colymba/gridfield-bulk-editing-tools": ">=2.1.1",
+        "colymba/gridfield-bulk-editing-tools": ">=2.0.2",
         "bummzack/sortablefile": "*"
     },
     "suggest": {
