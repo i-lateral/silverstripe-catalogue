@@ -29,7 +29,8 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         "URLSegment"        => "Varchar",
         "Content"           => "HTMLText",
         "MetaDescription"   => "Text",
-        "ExtraMeta"         => "HTMLText"
+        "ExtraMeta"         => "HTMLText",
+        "Disabled"          => "Boolean"
     );
     
     private static $has_one = array(
@@ -67,7 +68,8 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         "Title"         => "Title",
         "BasePrice"     => "Price",
         "TaxRate.Amount"=> "Tax Percent",
-        "CategoriesList"=> "Categories"
+        "CategoriesList"=> "Categories",
+        "Disabled"      => "Disabled"
     );
 
     private static $searchable_fields = array(
@@ -383,6 +385,10 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
                             $this->fieldLabel('TaxRate'),
                             TaxRate::get()->map()
                         )->setEmptyString(_t("Catalogue.None", "None")),
+                        CheckboxField::create(
+                            "Disabled",
+                            _t("Catalogue.DisableProduct", "Disable this product (will not appear on shopfront)")
+                        ),
                         DropdownField::create(
                             "ClassName",
                             _t("CatalogueAdmin.ProductType", "Type of product"),

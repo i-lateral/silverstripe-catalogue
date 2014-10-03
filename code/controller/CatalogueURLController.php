@@ -90,7 +90,7 @@ class CatalogueURLController extends Controller {
         // Find link, regardless of current locale settings
 		if(class_exists('Translatable')) Translatable::disable_locale_filter();
         
-        if($object = CatalogueProduct::get()->filter('URLSegment', $urlsegment)->first()) {
+        if($object = CatalogueProduct::get()->filter(array('URLSegment' => $urlsegment, 'Disabled' => 0))->first()) {
             $controller = $this->controller_for($object);
         } elseif($object = CatalogueCategory::get()->filter('URLSegment', $urlsegment)->first()) {
             $controller = $this->controller_for($object);

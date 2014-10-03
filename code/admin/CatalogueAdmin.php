@@ -80,6 +80,18 @@ class CatalogueAdmin extends ModelAdmin {
             // Bulk manager
             $manager = new GridFieldBulkManager();
             $manager->removeBulkAction("unlink");
+            
+            $manager->addBulkAction(
+                'disable',
+                'Disable',
+                'CatalogueProductBulkAction'
+            );
+            
+            $manager->addBulkAction(
+                'enable',
+                'Enable',
+                'CatalogueProductBulkAction'
+            );
 
             $field_config
                 ->removeComponentsByType('GridFieldPrintButton')

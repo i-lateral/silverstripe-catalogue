@@ -198,15 +198,15 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
         $products = new ArrayList();
 
         // First add all products from this category
-        foreach($this->Products() as $product) {
-            if(!$product->Disabled) $products->add($product);
+        foreach($this->Products()->filter("Disabled", 0) as $product) {
+            $products->add($product);
         }
 
         // Now loop each child product
         foreach($this->Children() as $child) {
             // First add all products from this category
-            foreach($child->Products() as $product) {
-                if(!$product->Disabled) $products->add($product);
+            foreach($child->Products()->filter("Disabled", 0) as $product) {
+                $products->add($product);
             }
         }
 

@@ -34,11 +34,12 @@ class Catalogue extends ViewableData {
      *
      * @param ParentCategoryID the ID of the parent category
      */
-    public function Products($ParentCategoryID = null) {
-        $products = CatalogueProduct::get();
-
-        if(isset($ParentCategoryID) && is_int($ParentCategoryID))
-            $products = $products->where("ParentID = {$ParentID}");
+    public function Products($ParentCategoryID = 0) {
+        $products = CatalogueProduct::get()
+            ->filter(array(
+                "ParentID" => $ParentCategoryID,
+                "Disabled" => 0
+            ));
 
         return $products;
     }
