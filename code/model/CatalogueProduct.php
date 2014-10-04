@@ -368,7 +368,6 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
                         HTMLEditorField::create('Content', $this->fieldLabel('Content'))
                             ->setRows(20)
                             ->addExtraClass('stacked'),
-                        TreeMultiSelectField::create("Categories", null, "CatalogueCategory"),
                         ToggleCompositeField::create('Metadata', _t('CommerceAdmin.MetadataToggle', 'Metadata'),
                             array(
                                 $metaFieldDesc = TextareaField::create("MetaDescription", $this->fieldLabel('MetaDescription')),
@@ -385,6 +384,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
                             $this->fieldLabel('TaxRate'),
                             TaxRate::get()->map()
                         )->setEmptyString(_t("Catalogue.None", "None")),
+                        TreeMultiSelectField::create("Categories", null, "CatalogueCategory"),
                         CheckboxField::create(
                             "Disabled",
                             _t("Catalogue.DisableProduct", "Disable this product (will not appear on shopfront)")
