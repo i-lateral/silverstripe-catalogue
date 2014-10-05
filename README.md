@@ -24,3 +24,7 @@ or the [siteconfig](https://github.com/i-lateral/silverstripe-siteconfig) module
 
 * Silverstripe CMS
 * Silverstripe Subsites
+
+## Docs
+
+For more info, please read the [documentation](docs/en/Index.md)
