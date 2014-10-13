@@ -195,20 +195,14 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
      * @return ArrayList
      */
     public function AllProducts() {
-        $products = new ArrayList();
+        $ids = array($this->ID);
+        $ids = array_merge($ids, $this->getDescendantIDList());
 
-        // First add all products from this category
-        foreach($this->Products()->filter("Disabled", 0) as $product) {
-            $products->add($product);
-        }
-
-        // Now loop each child product
-        foreach($this->Children() as $child) {
-            // First add all products from this category
-            foreach($child->Products()->filter("Disabled", 0) as $product) {
-                $products->add($product);
-            }
-        }
+        $products = CatalogueProduct::get()
+            ->filter(array(
+                "Categories.ID" => $ids,
+                "Disabled" => 0
+            ));
 
         return $products;
     }
