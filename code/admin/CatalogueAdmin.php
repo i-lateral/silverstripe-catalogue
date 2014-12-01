@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CatalogueAdmin creates an admin area that allows editing of products
  * and Product Categories
@@ -6,7 +7,6 @@
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-
 class CatalogueAdmin extends ModelAdmin {
     
     private static $url_segment = 'catalogue';
