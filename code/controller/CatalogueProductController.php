@@ -9,8 +9,21 @@
  */
 class CatalogueProductController extends CatalogueController {
 
+    /**
+     * Template names to be removed from the default template list 
+     * 
+     * @var array
+     * @config
+     */
+    private static $classes_to_remove = array(
+        "Object",
+        "ViewableData",
+        "DataObject",
+        "CatalogueProduct"
+    );
+
     private static $allowed_actions = array(
-        'image',
+        'iid',
         'Form'
     );
 
@@ -40,19 +53,10 @@ class CatalogueProductController extends CatalogueController {
         $this->failover = $this->dataRecord;
         parent::__construct();
     }
-
-    /**
-     * Get a list of templates to call and return a default render with
-     */
-    public function index() {
+    
+    protected function get_index_templates() {
         $classes = ClassInfo::ancestry($this->dataRecord->class);
-        $remove_classes = array(
-            "Object",
-            "ViewableData",
-            "DataObject",
-            "CatalogueProduct"
-        );
-
+        $remove_classes = self::config()->classes_to_remove;
         $return = array();
 
         array_push($classes, "Catalogue", "Page");
@@ -61,38 +65,57 @@ class CatalogueProductController extends CatalogueController {
             if(!in_array($class, $remove_classes))
                 $return[] = $class;
         }
-
-        return $this->renderWith($return);
+        
+        return $return;
     }
     
-    /**
-     * Get a list of templates to call and return a default render with
-     */
-    public function image() {
-        return $this->index();
-    }
-
     /**
      * The productimage action is used to determine the default image that will
      * appear related to a product
      *
      * @return Image
      */
-    public function ProductImage() {
+    public function getImageForProduct() {
         $images = $this->SortedImages();
         $action = $this->request->param('Action');
         $id = $this->request->param('ID');
 
         $image = null;
 
-        if($action && $action == "image" && $id)
+        if($action && $action === "iid" && $id)
             $image = $images->filter("ID",$id)->first();
 
         if(!$image)
             $image = $images->first();
+            
+        $this->extend("updateImageForProduct", $image);
 
         return $image;
     }
+
+    /**
+     * Get a list of templates to call and return a default render with
+     */
+    public function index() {
+        $this->customise(array("ProductImage" => $this->getImageForProduct()));
+        
+        $this->extend("onBeforeIndex");
+        
+        return $this->renderWith($this->get_index_templates());
+    }
+    
+    /**
+     * Get a list of templates to call and return a default render with
+     */
+    public function iid() {
+        $this->customise(array("ProductImage" => $this->getImageForProduct()));
+        
+        $this->extend("onBeforeIndex");
+        
+        return $this->renderWith($this->get_index_templates());
+    }
+
+    
     
     /**
      * Create a form to associate with this product, by default it will

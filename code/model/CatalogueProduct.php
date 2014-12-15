@@ -76,6 +76,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         "Title",
         "URLSegment",
         "Content",
+        "StockID",
         "MetaDescription"
     );
 

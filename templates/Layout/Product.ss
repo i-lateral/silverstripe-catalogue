@@ -15,7 +15,7 @@
                 <% if $Images.exists %>
                     <div class="thumbs">
                         <% loop $SortedImages %>
-                            <a href="{$Top.Link('image')}/$ID#catalogue-product-image">
+                            <a href="{$Top.Link('iid')}/$ID#catalogue-product-image">
                                 $PaddedImage(75,75)
                             </a>
                         <% end_loop %>
