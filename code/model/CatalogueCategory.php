@@ -13,10 +13,21 @@
  */
 class CatalogueCategory extends DataObject implements PermissionProvider {
     
+    /**
+     * Description for this object that will get loaded by the website
+     * when it comes to creating it for the first time.
+     * 
+     * @var string
+     * @config
+     */
+    private static $description = "A basic product category";
+    
     private static $db = array(
-        'Title'         => 'Varchar',
-        'URLSegment'    => 'Varchar',
-        'Sort'          => 'Int'
+        "Title"             => "Varchar",
+        "URLSegment"        => "Varchar",
+        "Sort"              => "Int",
+        "MetaDescription"   => "Text",
+        "ExtraMeta"         => "HTMLText",
     );
 
     private static $has_one = array(
@@ -208,38 +219,104 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
     }
 
     public function getCMSFields() {
-        $fields = parent::getCMSFields();
-
-        $fields->removeByName('Sort');
-        $fields->removeByName('Products');
-
-        $url_field = TextField::create('URLSegment')
-            ->setReadonly(true)
-            ->performReadonlyTransformation();
-
-        $parent_field = TreeDropdownField::create(
-            'ParentID',
-            'Parent Category',
-            'CatalogueCategory'
-        )->setLabelField("Title");
         
+        // Get a list of available product classes
+        $classnames = ClassInfo::getValidSubClasses("CatalogueCategory");
+        $categories_array = array();
         
-        $gridconfig = new GridFieldConfig_RelationEditor();
-        $gridconfig->addComponent(new GridFieldOrderableRows('SortOrder'));
+        foreach($classnames as $classname) {
+            $description = Config::inst()->get($classname, 'description');
+            
+            if($classname == 'CatalogueCategory' && !$description)
+                $description = self::config()->description;
+                    
+            $description = ($description) ? $classname . ' - ' . $description : $classname; 
+            
+            $categories_array[$classname] = $description;
+        }
         
-        $products_field = GridField::create(
-            "Products",
-            "",
-            $this->Products(),
-            $gridconfig
-        );
+        if(!$this->ID) {
+            $fields = new FieldList(
+                $rootTab = new TabSet("Root",
+                    // Main Tab Fields
+                    $tabMain = new Tab('Main',
+                        HiddenField::create("Title")
+                            ->setValue(_t("Catalogue.NewCategory", "New Category")),
+                        ProductTypeField::create(
+                            "ClassName",
+                            _t("ProductCatalogue.SelectCategoryType", "Select a type of Category"),
+                           $categories_array
+                        )
+                    )
+                )
+            );
+        } else {
+            // If CMS Installed, use URLSegmentField, otherwise use text
+            // field for URL
+            if(class_exists('SiteTreeURLSegmentField')) {
+                $baseLink = Controller::join_links (
+                    Director::absoluteBaseURL()
+                );
+                           
+                $url_field = SiteTreeURLSegmentField::create("URLSegment");
+                $url_field->setURLPrefix($baseLink);
+            } else
+                $url_field = TextField::create("URLSegment");
+                
+            $fields = new FieldList(
+                $rootTab = new TabSet("Root",
+                    // Main Tab Fields
+                    $tabMain = new Tab('Main',
+                        TextField::create("Title", $this->fieldLabel('Title')),
+                        $url_field,
+                        TreeDropdownField::create('ParentID',_t('CatalogueAdmin.ParentCategory', 'Parent Category'), 'CatalogueCategory')
+                            ->setLabelField("Title"),
+                        ToggleCompositeField::create('Metadata', _t('CatalogueAdmin.MetadataToggle', 'Metadata'),
+                            array(
+                                $metaFieldDesc = TextareaField::create("MetaDescription", $this->fieldLabel('MetaDescription')),
+                                $metaFieldExtra = TextareaField::create("ExtraMeta",$this->fieldLabel('ExtraMeta'))
+                            )
+                        )->setHeadingLevel(4)
+                    ),
+                    $tabSettings = new Tab('Settings',
+                        DropdownField::create(
+                            "ClassName",
+                            _t("CatalogueAdmin.CategoryType", "Type of Category"),
+                            $categories_array
+                        )
+                    )
+                )
+            );
+            
+            // Help text for MetaData on page content editor
+            $metaFieldDesc
+                ->setRightTitle(
+                    _t(
+                        'CatalogueAdmin.MetaDescHelp',
+                        "Search engines use this content for displaying search results (although it will not influence their ranking)."
+                    )
+                )->addExtraClass('help');
 
-        // Add fields to the CMS
-        $fields->addFieldToTab('Root.Main', TextField::create('Title'));
-        $fields->addFieldToTab('Root.Main', $url_field);
-        $fields->addFieldToTab('Root.Main', $parent_field);
-        $fields->addFieldToTab('Root.Products', $products_field);
+            $metaFieldExtra
+                ->setRightTitle(
+                    _t(
+                        'CatalogueAdmin.MetaExtraHelp',
+                        "HTML tags for additional meta information. For example &lt;meta name=\"customName\" content=\"your custom content here\" /&gt;"
+                    )
+                )->addExtraClass('help');
 
+            $fields->addFieldToTab(
+                'Root.Products',
+                GridField::create(
+                    "Products",
+                    "",
+                    $this->Products(),
+                    GridFieldConfig_RelationEditor::create()
+                        ->addComponent(new GridFieldOrderableRows('SortOrder'))
+                )
+            );
+        }
+        
         $this->extend('updateCMSFields', $fields);
 
         return $fields;

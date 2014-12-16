@@ -406,7 +406,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
             $metaFieldDesc
                 ->setRightTitle(
                     _t(
-                        'CommerceAdmin.MetaDescHelp',
+                        'CatalogueAdmin.MetaDescHelp',
                         "Search engines use this content for displaying search results (although it will not influence their ranking)."
                     )
                 )
@@ -414,7 +414,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
             $metaFieldExtra
                 ->setRightTitle(
                     _t(
-                        'CommerceAdmin.MetaExtraHelp',
+                        'CatalogueAdmin.MetaExtraHelp',
                         "HTML tags for additional meta information. For example &lt;meta name=\"customName\" content=\"your custom content here\" /&gt;"
                     )
                 )
