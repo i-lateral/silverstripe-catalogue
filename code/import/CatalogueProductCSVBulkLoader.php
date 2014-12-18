@@ -9,7 +9,8 @@
 class CatalogueProductCSVBulkLoader extends CsvBulkLoader {
     
     public $columnMap = array(
-        "Type"      => "ClassName",
+        "Product"   => "ClassName",
+        "ClassName" => "ClassName",
         "SKU"       => "StockID",
         "Name"      => "Title",
         "Price"     => "BasePrice",

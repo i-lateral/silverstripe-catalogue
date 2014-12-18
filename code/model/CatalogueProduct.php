@@ -63,7 +63,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
 
     private static $summary_fields = array(
         "CMSThumbnail"  => "Thumbnail",
-        "ClassName"     => "Type",
+        "ClassName"     => "Product",
         "StockID"       => "StockID",
         "Title"         => "Title",
         "BasePrice"     => "Price",
