@@ -236,12 +236,17 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
         }
         
         if(!$this->ID) {
+            $controller = Controller::curr();
+            $parent_id = $controller->request->getVar("ParentID");
+            
             $fields = new FieldList(
                 $rootTab = new TabSet("Root",
                     // Main Tab Fields
                     $tabMain = new Tab('Main',
                         HiddenField::create("Title")
                             ->setValue(_t("Catalogue.NewCategory", "New Category")),
+                        HiddenField::create("ParentID")
+                            ->setValue($parent_id),
                         ProductTypeField::create(
                             "ClassName",
                             _t("ProductCatalogue.SelectCategoryType", "Select a type of Category"),
