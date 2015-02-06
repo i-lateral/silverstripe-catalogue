@@ -79,7 +79,7 @@ class CatalogueAdmin extends ModelAdmin {
 
             // Bulk manager
             $manager = new GridFieldBulkManager();
-            $manager->removeBulkAction("unlink");
+            $manager->removeBulkAction("unLink");
             
             $manager->addBulkAction(
                 'disable',
@@ -127,7 +127,7 @@ class CatalogueAdmin extends ModelAdmin {
 
             // Bulk manager
             $manager = new GridFieldBulkManager();
-            $manager->removeBulkAction("unlink");
+            $manager->removeBulkAction("unLink");
 
             // Tidy up category config
             $field_config = $gridField->getConfig();
