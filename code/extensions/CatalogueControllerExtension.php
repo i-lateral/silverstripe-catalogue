@@ -21,11 +21,6 @@ class CatalogueControllerExtension extends Extension {
         
         // Only check if the DB needs upgrading on a dev build
         if($controller == "DevelopmentAdmin" && $action == "build") {
-            if(CommerceUpgrader::check()) {
-                $upgraded = CommerceUpgrader::upgrade();
-                
-                if(!$upgraded) user_error("Could not upgrade the Commerce module, please check the documentation on upgrading.");
-            }
             
             // Now check if the files we need are installed
             // Check if we have the files we need, if not, create them
