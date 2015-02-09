@@ -360,6 +360,16 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
         }
     }
     
+    public function requireDefaultRecords() {
+        parent::requireDefaultRecords();
+        
+        // Alter any existing recods that might have the wrong classname
+        foreach(CatalogueCategory::get()->filter("ClassName", "CatalogueCategory") as $category) {
+            $category->ClassName = "Category";
+            $category->write();
+        }
+    }
+    
     public function providePermissions() {
         return array(
             "CATALOGUE_ADD_CATEGORIES" => array(

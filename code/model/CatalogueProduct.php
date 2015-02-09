@@ -518,6 +518,16 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         }
     }
     
+    public function requireDefaultRecords() {
+        parent::requireDefaultRecords();
+        
+        // Alter any existing recods that might have the wrong classname
+        foreach(CatalogueProduct::get()->filter("ClassName", "CatalogueProduct") as $product) {
+            $product->ClassName = "Product";
+            $product->write();
+        }
+    }
+    
     public function providePermissions() {
         return array(
             "CATALOGUE_ADD_PRODUCTS" => array(
