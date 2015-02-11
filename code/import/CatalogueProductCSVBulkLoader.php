@@ -65,7 +65,7 @@ class CatalogueProductCSVBulkLoader extends CsvBulkLoader {
                     ->filter("StockID", $value)
                     ->first();
 
-                if($image) $object->RelatedProducts()->add($product);
+                if($product) $object->RelatedProducts()->add($product);
             }
         }
 
