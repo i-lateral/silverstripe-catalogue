@@ -58,6 +58,15 @@ class CatalogueProductCSVBulkLoader extends CsvBulkLoader {
 
                 if($image) $object->Images()->add($image);
             }
+            
+            // Find any related products (denoted by a 'RelatedXX' column)
+            if(strpos($key,'Related') !== false && $key != "RelatedProducts") {
+                $product = Product::get()
+                    ->filter("StockID", $value)
+                    ->first();
+
+                if($image) $object->RelatedProducts()->add($product);
+            }
         }
 
         $this->extend("onAfterProcess", $object, $record, $columnMap, $results, $preview);
