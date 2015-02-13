@@ -14,7 +14,7 @@ class CatalogueProductCSVBulkLoader extends CsvBulkLoader {
         "SKU"       => "StockID",
         "Name"      => "Title",
         "Price"     => "BasePrice",
-        "TaxPercent"=> '->importTaxPercent', 
+        "TaxPercent"=> '->importTaxPercent'
     );
 
     public $duplicateChecks = array(

@@ -11,5 +11,5 @@ Image:
   extensions:
     - CatalogueImageExtension
 LeftAndMain:
-  extensions:
-    - CatalogueLeftAndMainExtension
+  extra_requirements_css:
+    - catalogue/css/admin.css
