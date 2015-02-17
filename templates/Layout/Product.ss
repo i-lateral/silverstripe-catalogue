@@ -27,7 +27,7 @@
         <div class="unit-50 unit size1of2 catalogue-product-summary">
             <p>
                 <span class="price label big label-green">
-                    <span class="title"><% _t('Catalogue.Price','Price') %>:</span>
+                    <span class="title"><%t Catalogue.Price "Price" %>:</span>
                     <span class="value">
                         <% if $IncludesTax %>
                             {$PriceAndTax.nice}
@@ -59,7 +59,7 @@
     <% if $RelatedProducts.exists %>
         <hr/>
 
-        <h2><% _t('Catalogue.RelatedProducts','Related Products') %></h2>
+        <h2><%t Catalogue.RelatedProducts "Related Products" %></h2>
 
         <div class="units-row catalogue-related-products line">
             <% loop $RelatedProducts %>

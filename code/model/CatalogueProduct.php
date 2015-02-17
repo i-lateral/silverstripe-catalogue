@@ -341,7 +341,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
                             ->setValue(_t("Catalogue.NewProduct", "New Product")),
                         ProductTypeField::create(
                             "ClassName",
-                            _t("ProductCatalogue.SelectProductType", "Select a type of Product"),
+                            _t("Catalogue.SelectProductType", "Select a type of Product"),
                            $product_array
                         )
                     )
@@ -369,7 +369,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
                         HTMLEditorField::create('Content', $this->fieldLabel('Content'))
                             ->setRows(20)
                             ->addExtraClass('stacked'),
-                        ToggleCompositeField::create('Metadata', _t('CommerceAdmin.MetadataToggle', 'Metadata'),
+                        ToggleCompositeField::create('Metadata', _t('CatalogueAdmin.MetadataToggle', 'Metadata'),
                             array(
                                 $metaFieldDesc = TextareaField::create("MetaDescription", $this->fieldLabel('MetaDescription')),
                                 $metaFieldExtra = TextareaField::create("ExtraMeta",$this->fieldLabel('ExtraMeta'))

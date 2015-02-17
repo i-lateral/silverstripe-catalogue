@@ -75,7 +75,7 @@ class CatalogueAdmin extends ModelAdmin {
 
             // Re add creation button and update grid field
             $add_button = new GridFieldAddNewButton('buttons-before-left');
-            $add_button->setButtonName(_t("CommerceAdmin.AddProduct", "Add Product"));
+            $add_button->setButtonName(_t("CatalogueAdmin.AddProduct", "Add Product"));
 
             // Bulk manager
             $manager = new GridFieldBulkManager();

@@ -249,7 +249,7 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
                             ->setValue($parent_id),
                         ProductTypeField::create(
                             "ClassName",
-                            _t("ProductCatalogue.SelectCategoryType", "Select a type of Category"),
+                            _t("Catalogue.SelectCategoryType", "Select a type of Category"),
                            $categories_array
                         )
                     )
