@@ -205,7 +205,15 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
      *
      * @return ArrayList
      */
-    public function AllProducts() {
+    public function AllProducts($sort = array()) {
+        // Setup the default sort for our products
+        if(count($sort) == 0) {
+            $sort = array(
+                "SortOrder" => "ASC",
+                "Title" => "ASC"
+            );
+        }
+        
         $ids = array($this->ID);
         $ids = array_merge($ids, $this->getDescendantIDList());
 
@@ -213,7 +221,7 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
             ->filter(array(
                 "Categories.ID" => $ids,
                 "Disabled" => 0
-            ));
+            ))->sort($sort);
 
         return $products;
     }
