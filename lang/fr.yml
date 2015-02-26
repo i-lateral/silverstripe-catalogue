@@ -1,0 +1,39 @@
+fr:
+  Catalogue:
+    DefaultProductImage: 'Default product image'
+    DisableProduct: 'Disable this product (will not appear on shopfront)'
+    FilterBy: 'Filter by'
+    NewCategory: 'New Category'
+    NewProduct: 'New Product'
+    None: None
+    Price: Prix
+    RelatedProducts: 'Articles liés'
+    SelectCategoryType: 'Select a type of Category'
+    SelectProductType: 'Select a type of Product'
+    StockIDHelp: 'For example, a product SKU'
+    TaxExcludes: Excludes
+    TaxIncludes: Includes
+    TaxRates: 'Tax Rates'
+  CatalogueAdmin:
+    AddCategory: 'Add Category'
+    AddProduct: 'Add Product'
+    CategoryType: 'Type of Category'
+    MetaDescHelp: 'Search engines use this content for displaying search results (although it will not influence their ranking).'
+    MetaExtraHelp: 'HTML tags for additional meta information. For example &lt;meta name="customName" content="your custom content here" /&gt;'
+    MetadataToggle: Metadata
+    ParentCategory: 'Parent Category'
+    ProductType: 'Type of product'
+    MENUTITLE: Catalogue
+  CatalogueCategory:
+    PLURALNAME: 'Catalogue Categories'
+    SINGULARNAME: 'Catalogue Category'
+  CatalogueProduct:
+    PLURALNAME: 'Catalogue Products'
+    SINGULARNAME: 'Catalogue Product'
+  GridField:
+    NewRecord: 'New %s'
+  SearchForm:
+    SearchResults: 'Search Results'
+  TaxRate:
+    PLURALNAME: 'Tax Rates'
+    SINGULARNAME: 'Tax Rate'
