@@ -24,11 +24,11 @@ If you do, then follow this process:
 * Extract the module into a directory callled "catalogue" in your project
 * Run http://www.yoursite.com/dev/build?flush=all
 
-## Add a "Product" object
+## Add a "Product" and "Category" objects and controllers
 
 The catalogue module works in a similar way to the CMS module. Once
-installed you will need to add a "Product" object to your "mysite"
-folder that extends CatalogueProduct.
+installed you will need to add a "Product" and a "Category" (that extend
+CatalogueProduct and CatalogueCategory) object to your "mysite" folder.
 
 For example:
 
@@ -44,8 +44,50 @@ For example:
     
     }
     
+    /projectroot/mysite/code/Category.php
+    
+    <?php
+    
+    class Category extends CatalogueCategory {
+    
+      private static $has_one = array(
+          "Image" => "Image"
+      );
+    
+    }
+    
 **Note** You will need to add this in order to add a product through the
-admin. 
+admin.
+
+Once you have done this, you also need to add a Product_Controller and
+Catagory_Controller object to your mysite folder that extend
+CatalogueProductController and CatalogueCategoryController, EG:
+
+    /projectroot/mysite/code/Product_Controller.php
+    
+    <?php
+    
+    class Product_Controller extends CatalogueProductController {    
+    
+        public function index() {
+            // Some stuff happens here
+            return parent::index();
+        }
+    
+    }
+    
+    /projectroot/mysite/code/Category_Controller.php
+    
+    <?php
+    
+    class Category_Controller extends CatalogueCategoryController {
+        
+        public function index() {
+            // Some stuff happens here
+            return parent::index();
+        }
+    }
+
 
 ## Setting up your catalogue
 

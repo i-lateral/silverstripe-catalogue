@@ -7,23 +7,22 @@ templates.
 
 ## Adding new templates
 
-A default template for "Product" is provided in this module's
-"templates" folder.
+Default templates for "Product" and "Category" are provided in this
+module's "templates" folder.
 
-Once you add new products, you can use custom templates for them by
-adding a template od the samme name as your Product object to your
+Once you add new products types, you can use custom templates for them
+by adding a template of the same name as your Product object to your
 theme.
-
 
 ## Template Variables
 
 The catalogue module provides several variables to Controller. These
-variables should be available globally and accessed via the:
+variables should be available globally and accessed via:
 
     $Catalogue
     
-Template variable. Currently the catalogue variable provides the
-following additional variables:
+Currently the catalogue variable provides the following additional
+variables:
 
 ### List of categories
 
