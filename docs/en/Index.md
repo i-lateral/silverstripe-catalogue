@@ -21,6 +21,6 @@ checkout module (or install the commerce module instead).
 
 ## Further reading
 
-* [Installation & Setup](Instalation.md)
+* [Installation & Setup](Installation.md)
 * [Configuration](Configuration.md)
 * [Templates & variables](Templates.md)
