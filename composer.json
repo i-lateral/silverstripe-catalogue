@@ -16,7 +16,7 @@
     },
     "require": {
         "silverstripe/framework": ">=3.1",
-        "silverstripe-australia/gridfieldextensions": "1.1.0",
+        "silverstripe-australia/gridfieldextensions": "1.1.*",
         "colymba/gridfield-bulk-editing-tools": "~2.1",
         "bummzack/sortablefile": "*"
     },
