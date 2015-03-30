@@ -28,6 +28,7 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
         "Sort"              => "Int",
         "MetaDescription"   => "Text",
         "ExtraMeta"         => "HTMLText",
+        "Disabled"          => "Boolean"
     );
 
     private static $has_one = array(
@@ -58,6 +59,23 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
 
     private static $default_sort = '"Sort" ASC';
 
+    /**
+     * Is this object enabled?
+     * 
+     * @return Boolean
+     */
+    public function isEnabled() {
+        return ($this->Disabled) ? false : true;
+    }
+    
+    /**
+     * Is this object disabled?
+     * 
+     * @return Boolean
+     */
+    public function isDisabled() {
+        return $this->Disabled;
+    }
 
     /**
 	 * Return the link for this {@link SimpleProduct} object, with the

@@ -68,6 +68,23 @@ class CatalogueAdmin extends ModelAdmin {
     public function getEditForm($id = null, $fields = null) {
         $form = parent::getEditForm($id, $fields);
         $params = $this->request->requestVar('q');
+        
+        
+        // Bulk manager
+        $manager = new GridFieldBulkManager();
+        $manager->removeBulkAction("unLink");
+        
+        $manager->addBulkAction(
+            'disable',
+            'Disable',
+            'CatalogueProductBulkAction'
+        );
+        
+        $manager->addBulkAction(
+            'enable',
+            'Enable',
+            'CatalogueProductBulkAction'
+        );
 
         if($this->modelClass == 'CatalogueProduct') {
             $gridField = $form->Fields()->fieldByName('CatalogueProduct');
@@ -77,28 +94,14 @@ class CatalogueAdmin extends ModelAdmin {
             $add_button = new GridFieldAddNewButton('buttons-before-left');
             $add_button->setButtonName(_t("CatalogueAdmin.AddProduct", "Add Product"));
 
-            // Bulk manager
-            $manager = new GridFieldBulkManager();
-            $manager->removeBulkAction("unLink");
-            
-            $manager->addBulkAction(
-                'disable',
-                'Disable',
-                'CatalogueProductBulkAction'
-            );
-            
-            $manager->addBulkAction(
-                'enable',
-                'Enable',
-                'CatalogueProductBulkAction'
-            );
-
             $field_config
                 ->removeComponentsByType('GridFieldPrintButton')
                 ->removeComponentsByType('GridFieldAddNewButton')
+                ->removeComponentsByType('GridFieldDetailForm')
                 ->addComponents(
                     $add_button,
-                    $manager
+                    $manager,
+                    new CatalogueEnableDisableDetailForm()
                 );
 
             // Update list of items for subsite (if used)
@@ -118,16 +121,12 @@ class CatalogueAdmin extends ModelAdmin {
             $gridField = $form->Fields()->fieldByName('CatalogueCategory');
 
             // Set custom record editor
-            $record_editor = new GridFieldDetailForm();
+            $record_editor = new CatalogueEnableDisableDetailForm();
             $record_editor->setItemRequestClass('CatalogueCategory_ItemRequest');
 
             // Create add button and update grid field
             $add_button = new GridFieldAddNewButton('toolbar-header-left');
             $add_button->setButtonName(_t("CatalogueAdmin.AddCategory", "Add Category"));
-
-            // Bulk manager
-            $manager = new GridFieldBulkManager();
-            $manager->removeBulkAction("unLink");
 
             // Tidy up category config
             $field_config = $gridField->getConfig();
@@ -201,7 +200,7 @@ class CatalogueAdmin extends ModelAdmin {
     }
 }
 
-class CatalogueCategory_ItemRequest extends GridFieldDetailForm_ItemRequest {
+class CatalogueCategory_ItemRequest extends CatalogueEnableDisableDetailForm_ItemRequest {
     private static $allowed_actions = array(
         "ItemEditForm"
     );

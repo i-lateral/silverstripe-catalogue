@@ -90,9 +90,14 @@ class CatalogueURLController extends Controller {
         // Find link, regardless of current locale settings
 		if(class_exists('Translatable')) Translatable::disable_locale_filter();
         
-        if($object = CatalogueProduct::get()->filter(array('URLSegment' => $urlsegment, 'Disabled' => 0))->first()) {
+        $filter = array(
+            'URLSegment' => $urlsegment,
+            'Disabled' => 0
+        );
+        
+        if($object = CatalogueProduct::get()->filter($filter)->first()) {
             $controller = $this->controller_for($object);
-        } elseif($object = CatalogueCategory::get()->filter('URLSegment', $urlsegment)->first()) {
+        } elseif($object = CatalogueCategory::get()->filter($filter)->first()) {
             $controller = $this->controller_for($object);
         } elseif(class_exists('ModelAsController')) { // If CMS installed
             $controller = ModelAsController::create();

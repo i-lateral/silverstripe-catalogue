@@ -26,7 +26,11 @@ class Catalogue extends ViewableData {
      * @return SS_List
      */
     public function Categories($ParentID = 0) {
-        return CatalogueCategory::get()->filter("ParentID", $ParentID);
+        return CatalogueCategory::get()
+            ->filter(array(
+                "ParentID" => $ParentID,
+                "Disabled" => 0
+            ));
     }
 
     /**
@@ -35,12 +39,10 @@ class Catalogue extends ViewableData {
      * @param ParentCategoryID the ID of the parent category
      */
     public function Products($ParentCategoryID = 0) {
-        $products = CatalogueProduct::get()
+        return CatalogueProduct::get()
             ->filter(array(
                 "ParentID" => $ParentCategoryID,
                 "Disabled" => 0
             ));
-
-        return $products;
     }
 }

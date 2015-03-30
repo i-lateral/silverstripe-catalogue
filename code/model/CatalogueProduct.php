@@ -83,6 +83,24 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
     private static $default_sort = '"Title" ASC';
     
     /**
+     * Is this object enabled?
+     * 
+     * @return Boolean
+     */
+    public function isEnabled() {
+        return ($this->Disabled) ? false : true;
+    }
+    
+    /**
+     * Is this object disabled?
+     * 
+     * @return Boolean
+     */
+    public function isDisabled() {
+        return $this->Disabled;
+    }
+    
+    /**
      * Method that allows us to define in templates if we should show
      * price including tax, or excluding tax
      * 
