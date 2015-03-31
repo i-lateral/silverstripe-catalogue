@@ -14,6 +14,14 @@
 class CatalogueProduct extends DataObject implements PermissionProvider {
     
     /**
+     * Determines if a product's stock ID will be auto generated if
+     * not set.
+     * 
+     * @config
+     */
+    private static $auto_stock_id = true;
+    
+    /**
      * Description for this object that will get loaded by the website
      * when it comes to creating it for the first time.
      * 
@@ -455,7 +463,12 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
     }
 
     public function getCMSValidator() {
-        return new RequiredFields(array("Title","StockID"));
+        $required = array("Title");
+        
+        if(!$this->config()->auto_stock_id)
+            $required[] = "StockID";
+        
+        return new RequiredFields($required);
     }
 
     /**
@@ -534,6 +547,17 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
             $this->URLSegment = preg_replace('/-[0-9]+$/', null, $this->URLSegment) . '-' . $count;
             $count++;
         }
+        
+        if($this->ID && $this->config()->auto_stock_id && !$this->StockID) {
+            $title = "";
+            
+            foreach(explode("-", $this->URLSegment) as $string) {
+                $string = substr($string,0,1);
+                $title .= $string;
+            }
+            
+            $this->StockID = $title . "-" . $this->ID;
+        } 
     }
     
     public function requireDefaultRecords() {
