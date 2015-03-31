@@ -563,10 +563,16 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
     public function requireDefaultRecords() {
         parent::requireDefaultRecords();
         
-        // Alter any existing recods that might have the wrong classname
-        foreach(CatalogueProduct::get()->filter("ClassName", "CatalogueProduct") as $product) {
-            $product->ClassName = "Product";
-            $product->write();
+        $records = CatalogueProduct::get()
+            ->filter("ClassName", "CatalogueProduct");
+        
+        if($records->exists()) {
+            // Alter any existing recods that might have the wrong classname
+            foreach($records as $product) {
+                $product->ClassName = "Product";
+                $product->write();
+            }
+            DB::alteration_message("Updated {$records->count()} Product records", 'obsolete');
         }
     }
     
