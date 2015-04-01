@@ -64,6 +64,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         "CMSThumbnail"      => "Varchar",
         "Price"             => "Currency",
         "Tax"               => "Currency",
+        "TaxPercent"        => "Decimal",
         "PriceAndTax"       => "Currency",
         "TaxString"         => "Varchar",
         "IncludeTax"        => "Boolean"
@@ -125,7 +126,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      *
      * @return Currency
      */
-    public function Price() {
+    public function getPrice() {
         $price = $this->BasePrice;
         
         $this->extend("updatePrice", $price);
@@ -140,7 +141,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      *
      * @return Currency
      */
-    public function Tax() {
+    public function getTax() {
         $price = $this->BasePrice;
         
         // If tax is enabled in config, add it to the final price
@@ -155,12 +156,21 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
     }
     
     /**
+     * Get the percentage amount of tax applied to this item
+     *
+     * @return Decimal
+     */
+    public function getTaxPercent() {
+        return ($this->TaxRateID) ? $this->TaxRate()->Amount : 0;
+    }
+    
+    /**
      * Get the final price of this product, including tax (if any)
      *
      * @return Currency
      */
-    public function PriceAndTax() {
-        $price = $this->Price() + $this->Tax();
+    public function getPriceAndTax() {
+        $price = $this->Price + $this->Tax;
         
         $this->extend("updatePriceAndTax", $price);
         
@@ -174,7 +184,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      *
      * @return String
      */
-    public function TaxString() {
+    public function getTaxString() {
         if($this->TaxRateID && Catalogue::config()->price_includes_tax)
             $return = _t("Catalogue.TaxIncludes", "Includes") . " " . $this->TaxRate()->Title;
         elseif($this->TaxRateID && !Catalogue::config()->price_includes_tax)
