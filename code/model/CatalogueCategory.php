@@ -208,13 +208,39 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
     }
 
     /**
-     * Return sorted images, if no images exist, create a new opbject set
-     * with a blank product image in it.
+     * Return a list of child categories that are not disabled
+     *
+     * @return ArrayList
+     */
+    public function EnabledChildren() {
+        return $this
+            ->Children()
+            ->filter("Disabled", 0);
+    }
+    
+    /**
+     * Return a list of products in that category that are not disabled
+     *
+     * @return ArrayList
+     */
+    public function EnabledProducts() {
+        return $this
+            ->Products()
+            ->filter("Disabled", 0);
+    }
+    
+    /**
+     * Return sorted products in thsi category that are enabled
      *
      * @return ArrayList
      */
     public function SortedProducts() {
-        return $this->Products()->Sort("SortOrder ASC, \"CatalogueProduct\".\"Title\" ASC");
+        return $this
+            ->EnabledProducts()
+            ->Sort(array(
+                "SortOrder" => "ASC",
+                "Title" => "ASC"
+            ));
     }
 
     /**

@@ -6,10 +6,10 @@
     <h1>$Title</h1>
 
     <div class="units-row catalogue-list">
-        <% if $Children.filter("Disabled", 0).exists %>
+        <% if $EnabledChildren.exists %>
             <p>
                 <strong><%t Catalogue.FilterBy "Filter by" %>:</strong>
-                <% loop $Children.filter("Disabled", 0) %>
+                <% loop $EnabledChildren %>
                     <span class="link"><a href="$Link">$Title</a></span>
                     <% if not $Last %>|<% end_if %>
                 <% end_loop %>
