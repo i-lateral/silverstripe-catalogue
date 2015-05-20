@@ -497,7 +497,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         );
         
         if(class_exists("SiteTree"))
-            $objects_to_check[] = "SiteTree"
+            $objects_to_check[] = "SiteTree";
 
         $segment = Convert::raw2sql($this->URLSegment);
 
