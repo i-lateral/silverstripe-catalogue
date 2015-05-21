@@ -24,11 +24,14 @@ class CatalogueProductCSVBulkLoader extends CsvBulkLoader {
     );
 
     public function __construct($objectClass = null) {
-        if(!$objectClass) $objectClass = 'Product';
+        
+        if(class_exists("Product")) {
+            if(!$objectClass || $objectClass == "CatalogueProduct")
+                $objectClass = 'Product';
+        }
 
         parent::__construct($objectClass);
     }
-
 
     public function processRecord($record, $columnMap, &$results, $preview = false) {
 
