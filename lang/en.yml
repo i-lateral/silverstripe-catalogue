@@ -1,7 +1,11 @@
 en:
   Catalogue:
     DefaultProductImage: 'Default product image'
+    Disable: Disable
     DisableProduct: 'Disable this product (will not appear on shopfront)'
+    Disabled: 'Disabled %s %s'
+    Enable: Enable
+    Enabled: 'Enabled %s %s'
     FilterBy: 'Filter by'
     NewCategory: 'New Category'
     NewProduct: 'New Product'

@@ -9,6 +9,20 @@
  */
 class CatalogueAdmin extends ModelAdmin {
     
+    /**
+     * Set the page length for products
+     * 
+     * @config
+     */
+    private static $product_page_length = 20;
+    
+    /**
+     * Set the page length for categories
+     * 
+     * @config
+     */
+    private static $category_page_length = 20;
+    
     private static $url_segment = 'catalogue';
 
     private static $menu_title = 'Catalogue';
@@ -103,6 +117,12 @@ class CatalogueAdmin extends ModelAdmin {
                     $manager,
                     new CatalogueEnableDisableDetailForm()
                 );
+                
+            
+            // Set the page length
+            $field_config
+                ->getComponentByType('GridFieldPaginator')
+                ->setItemsPerPage($this->config()->product_page_length);
 
             // Update list of items for subsite (if used)
             if(class_exists('Subsite')) {
@@ -141,6 +161,11 @@ class CatalogueAdmin extends ModelAdmin {
                     $manager,
                     GridFieldOrderableRows::create('Sort')
                 );
+            
+            // Set the page length
+            $field_config
+                ->getComponentByType('GridFieldPaginator')
+                ->setItemsPerPage($this->config()->category_page_length);
 
             // Setup hierarchy view
             $parentID = $this->request->requestVar('ParentID');
