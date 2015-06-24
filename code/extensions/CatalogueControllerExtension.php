@@ -41,9 +41,11 @@ class CatalogueControllerExtension extends Extension {
             }
         }
         
-        if(class_exists('Subsite') && Subsite::currentSubsite()) {
-            // Set the location
-            i18n::set_locale(Subsite::currentSubsite()->Language);
+        if($controller != "DevelopmentAdmin") {
+            if(class_exists('Subsite') && Subsite::currentSubsite()) {
+                // Set the location
+                i18n::set_locale(Subsite::currentSubsite()->Language);
+            }
         }
     }
     
