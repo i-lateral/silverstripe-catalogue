@@ -75,6 +75,8 @@ class CatalogueAdmin extends ModelAdmin {
 
             $list = $list->filter('ParentID',$parentID);
         }
+        
+        $this->extend('updateList', $list);
 
         return $list;
     }
