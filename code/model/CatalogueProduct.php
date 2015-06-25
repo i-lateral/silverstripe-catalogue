@@ -129,7 +129,8 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
     public function getPrice() {
         $price = $this->BasePrice;
         
-        $this->extend("updatePrice", $price);
+        $new_price = $this->extend("updatePrice", $price);
+        if($new_price && is_array($new_price)) $price = $new_price[0];
         
         return $price;
     }
@@ -150,7 +151,8 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         else
             $tax = 0;
         
-        $this->extend("updateTax", $tax);
+        $new_tax = $this->extend("updateTax", $tax);
+        if($new_tax && is_array($new_tax)) $tax = $new_tax[0];
         
         return $tax;
     }
@@ -172,7 +174,8 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
     public function getPriceAndTax() {
         $price = $this->Price + $this->Tax;
         
-        $this->extend("updatePriceAndTax", $price);
+        $new_price = $this->extend("updatePriceAndTax", $price);
+        if($new_price && is_array($new_price)) $price = $new_price[0];
         
         return $price;
     }
