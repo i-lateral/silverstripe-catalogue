@@ -30,15 +30,15 @@ class CatalogueAdmin extends ModelAdmin {
     private static $menu_priority = 11;
 
     private static $managed_models = array(
-        'CatalogueProduct' => array('title' => 'Products'),
-        'CatalogueCategory' => array('title' => 'Categories')
+        'Product' => array('title' => 'Products'),
+        'Category' => array('title' => 'Categories')
     );
 
     private static $model_importers = array(
-        'CatalogueProduct' => 'CatalogueProductCSVBulkLoader',
+        'Product' => 'CatalogueProductCSVBulkLoader',
     );
 
-    public $showImportForm = array('CatalogueProduct');
+    public $showImportForm = array('Product');
 
     public function init() {
         parent::init();
@@ -50,7 +50,7 @@ class CatalogueAdmin extends ModelAdmin {
             "URLSegment" => "URLSegment"
         );
         
-        if($this->modelClass == 'CatalogueProduct') {
+        if($this->modelClass == 'Product') {
             $fields["StockID"] = "StockID";
             $fields["ClassName"] = "Type";
             $fields["BasePrice"] = "Price";
@@ -69,7 +69,7 @@ class CatalogueAdmin extends ModelAdmin {
         $list = parent::getList();
         
         // Filter categories
-        if($this->modelClass == 'CatalogueCategory') {
+        if($this->modelClass == 'Category') {
             $parentID = $this->request->requestVar('ParentID');
             if(!$parentID) $parentID = 0;
 
@@ -102,8 +102,8 @@ class CatalogueAdmin extends ModelAdmin {
             'CatalogueProductBulkAction'
         );
 
-        if($this->modelClass == 'CatalogueProduct') {
-            $gridField = $form->Fields()->fieldByName('CatalogueProduct');
+        if($this->modelClass == 'Product') {
+            $gridField = $form->Fields()->fieldByName('Product');
             $field_config = $gridField->getConfig();
 
             // Re add creation button and update grid field
@@ -139,8 +139,8 @@ class CatalogueAdmin extends ModelAdmin {
         }
         
         // Alterations for Hiarachy on product cataloge
-        if($this->modelClass == 'CatalogueCategory') {
-            $gridField = $form->Fields()->fieldByName('CatalogueCategory');
+        if($this->modelClass == 'Category') {
+            $gridField = $form->Fields()->fieldByName('Category');
 
             // Set custom record editor
             $record_editor = new CatalogueEnableDisableDetailForm();
