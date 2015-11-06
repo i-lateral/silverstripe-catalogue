@@ -56,6 +56,7 @@ class CatalogueProductController extends CatalogueController {
     
     protected function get_index_templates() {
         $classes = ClassInfo::ancestry($this->dataRecord->class);
+        $classes = array_reverse($classes);
         $remove_classes = self::config()->classes_to_remove;
         $return = array();
 
