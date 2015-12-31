@@ -7,7 +7,8 @@
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class Catalogue extends ViewableData {
+class Catalogue extends ViewableData
+{
     
     /**
      * Show price including tax in catalogue and product pages?
@@ -25,7 +26,8 @@ class Catalogue extends ViewableData {
      * @param Parent the ID of a parent cetegory
      * @return SS_List
      */
-    public function Categories($ParentID = 0) {
+    public function Categories($ParentID = 0)
+    {
         return CatalogueCategory::get()
             ->filter(array(
                 "ParentID" => $ParentID,
@@ -38,7 +40,8 @@ class Catalogue extends ViewableData {
      *
      * @param ParentCategoryID the ID of the parent category
      */
-    public function Products($ParentCategoryID = 0) {
+    public function Products($ParentCategoryID = 0)
+    {
         return CatalogueProduct::get()
             ->filter(array(
                 "ParentID" => $ParentCategoryID,

@@ -11,7 +11,8 @@
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class CatalogueProduct extends DataObject implements PermissionProvider {
+class CatalogueProduct extends DataObject implements PermissionProvider
+{
     
     /**
      * Determines if a product's stock ID will be auto generated if
@@ -96,7 +97,8 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      * 
      * @return Boolean
      */
-    public function isEnabled() {
+    public function isEnabled()
+    {
         return ($this->Disabled) ? false : true;
     }
     
@@ -105,7 +107,8 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      * 
      * @return Boolean
      */
-    public function isDisabled() {
+    public function isDisabled()
+    {
         return $this->Disabled;
     }
     
@@ -115,7 +118,8 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      * 
      * @return boolean
      */
-    public function IncludesTax() {
+    public function IncludesTax()
+    {
         return Catalogue::config()->price_includes_tax;
     }
     
@@ -126,11 +130,14 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      *
      * @return Currency
      */
-    public function getPrice() {
+    public function getPrice()
+    {
         $price = $this->BasePrice;
         
         $new_price = $this->extend("updatePrice", $price);
-        if($new_price && is_array($new_price)) $price = $new_price[0];
+        if ($new_price && is_array($new_price)) {
+            $price = $new_price[0];
+        }
         
         return $price;
     }
@@ -142,17 +149,21 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      *
      * @return Currency
      */
-    public function getTax() {
+    public function getTax()
+    {
         $price = $this->BasePrice;
         
         // If tax is enabled in config, add it to the final price
-        if($this->TaxRateID && $this->TaxRate()->Amount)
+        if ($this->TaxRateID && $this->TaxRate()->Amount) {
             $tax = ($price / 100) * $this->TaxRate()->Amount;
-        else
+        } else {
             $tax = 0;
+        }
         
         $new_tax = $this->extend("updateTax", $tax);
-        if($new_tax && is_array($new_tax)) $tax = $new_tax[0];
+        if ($new_tax && is_array($new_tax)) {
+            $tax = $new_tax[0];
+        }
         
         return $tax;
     }
@@ -162,7 +173,8 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      *
      * @return Decimal
      */
-    public function getTaxPercent() {
+    public function getTaxPercent()
+    {
         return ($this->TaxRateID) ? $this->TaxRate()->Amount : 0;
     }
     
@@ -171,11 +183,14 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      *
      * @return Currency
      */
-    public function getPriceAndTax() {
+    public function getPriceAndTax()
+    {
         $price = $this->Price + $this->Tax;
         
         $new_price = $this->extend("updatePriceAndTax", $price);
-        if($new_price && is_array($new_price)) $price = $new_price[0];
+        if ($new_price && is_array($new_price)) {
+            $price = $new_price[0];
+        }
         
         return $price;
     }
@@ -187,82 +202,89 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      *
      * @return String
      */
-    public function getTaxString() {
-        if($this->TaxRateID && Catalogue::config()->price_includes_tax)
+    public function getTaxString()
+    {
+        if ($this->TaxRateID && Catalogue::config()->price_includes_tax) {
             $return = _t("Catalogue.TaxIncludes", "Includes") . " " . $this->TaxRate()->Title;
-        elseif($this->TaxRateID && !Catalogue::config()->price_includes_tax)
+        } elseif ($this->TaxRateID && !Catalogue::config()->price_includes_tax) {
             $return = _t("Catalogue.TaxExcludes", "Excludes") . " " . $this->TaxRate()->Title;
-        else
+        } else {
             $return = "";
+        }
         
         return $return;
     }
     
     
     /**
-	 * Return the link for this {@link SimpleProduct} object, with the
+     * Return the link for this {@link SimpleProduct} object, with the
      * {@link Director::baseURL()} included.
-	 *
-	 * @param string $action Optional controller action (method). 
-	 *  Note: URI encoding of this parameter is applied automatically through template casting,
-	 *  don't encode the passed parameter.
-	 *  Please use {@link Controller::join_links()} instead to append GET parameters.
-	 * @return string
-	 */
-	public function Link($action = null) {
-		return Controller::join_links(
+     *
+     * @param string $action Optional controller action (method). 
+     *  Note: URI encoding of this parameter is applied automatically through template casting,
+     *  don't encode the passed parameter.
+     *  Please use {@link Controller::join_links()} instead to append GET parameters.
+     * @return string
+     */
+    public function Link($action = null)
+    {
+        return Controller::join_links(
             Director::baseURL(),
             $this->RelativeLink($action)
         );
-	}
-	
-	/**
-	 * Get the absolute URL for this page, including protocol and host.
-	 *
-	 * @param string $action See {@link Link()}
-	 * @return string
-	 */
-	public function AbsoluteLink($action = null) {
-		if($this->hasMethod('alternateAbsoluteLink')) {
-			return $this->alternateAbsoluteLink($action);
-		} else {
-			return Director::absoluteURL($this->Link($action));
-		}
-	}
+    }
     
     /**
-	 * Return the link for this {@link Product}
-	 *
-	 * 
-	 * @param string $action See {@link Link()}
-	 * @return string
-	 */
-	public function RelativeLink($action = null) {
+     * Get the absolute URL for this page, including protocol and host.
+     *
+     * @param string $action See {@link Link()}
+     * @return string
+     */
+    public function AbsoluteLink($action = null)
+    {
+        if ($this->hasMethod('alternateAbsoluteLink')) {
+            return $this->alternateAbsoluteLink($action);
+        } else {
+            return Director::absoluteURL($this->Link($action));
+        }
+    }
+    
+    /**
+     * Return the link for this {@link Product}
+     *
+     * 
+     * @param string $action See {@link Link()}
+     * @return string
+     */
+    public function RelativeLink($action = null)
+    {
         $base = $this->URLSegment;
-		
-		$this->extend('updateRelativeLink', $base, $action);
+        
+        $this->extend('updateRelativeLink', $base, $action);
 
-		return Controller::join_links($base, $action);
-	}
+        return Controller::join_links($base, $action);
+    }
     
     /**
      * We use this to tap into the categories "isSection" setup,
      * essentially adding the product's first category to the list
      * 
      */
-    public function getAncestors() {
+    public function getAncestors()
+    {
         $ancestors = ArrayList::create();
         
         $object    = $this->Categories()->first();
 
-        while($object = $object->getParent()) {
+        while ($object = $object->getParent()) {
             $ancestors->push($object);
         }
 
         return $ancestors;
     }
     
-    public function getMenuTitle() {
+    public function getMenuTitle()
+    {
         return $this->Title;
     }
 
@@ -272,10 +294,11 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      *
      * @return ArrayList
      */
-    public function SortedImages(){
-        if($this->Images()->exists())
+    public function SortedImages()
+    {
+        if ($this->Images()->exists()) {
             $images = $this->Images()->Sort('SortOrder');
-        elseif(SiteConfig::current_site_config()->DefaultProductImageID) {
+        } elseif (SiteConfig::current_site_config()->DefaultProductImageID) {
             $default_image = SiteConfig::current_site_config()->DefaultProductImage();
             
             $images = new ArrayList();
@@ -285,7 +308,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
             $no_image_path = Controller::join_links(BASE_PATH, $no_image);
             
             // if no-image does not exist, copy to the assets folder
-            if(!file_exists($no_image_path)) {
+            if (!file_exists($no_image_path)) {
                 $curr_file = Controller::join_links(
                     BASE_PATH,
                     "catalogue/images/no-image.png"
@@ -315,14 +338,15 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      *
      * @return string The breadcrumb trail.
      */
-    public function Breadcrumbs($maxDepth = 20) {
+    public function Breadcrumbs($maxDepth = 20)
+    {
         $items = array();
 
-        if($this->Categories()->exists()) {
+        if ($this->Categories()->exists()) {
             $items[] = $this;
             $category = $this->Categories()->first();
 
-            foreach($category->parentStack() as $item) {
+            foreach ($category->parentStack() as $item) {
                 $items[] = $item;
             }
         }
@@ -334,15 +358,17 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         ))));
     }
 
-    public function getCMSThumbnail() {
-        return $this->SortedImages()->first()->PaddedImage(50,50);
+    public function getCMSThumbnail()
+    {
+        return $this->SortedImages()->first()->PaddedImage(50, 50);
     }
 
-    public function getCategoriesList() {
+    public function getCategoriesList()
+    {
         $list = '';
 
-        if($this->Categories()->exists()){
-            foreach($this->Categories() as $category) {
+        if ($this->Categories()->exists()) {
+            foreach ($this->Categories() as $category) {
                 $list .= $category->Title;
                 $list .= ', ';
             }
@@ -351,19 +377,21 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         return $list;
     }
 
-    public function getCMSFields() {
+    public function getCMSFields()
+    {
         // Get a list of available product classes
         $classnames = ClassInfo::getValidSubClasses("CatalogueProduct");
         $product_array = array();
         
-        foreach($classnames as $classname) {
-            if($classname != "CatalogueProduct") {
+        foreach ($classnames as $classname) {
+            if ($classname != "CatalogueProduct") {
                 $description = Config::inst()->get($classname, 'description');
                 
-                if($classname == 'Product' && !$description)
+                if ($classname == 'Product' && !$description) {
                     $description = self::config()->description;
+                }
                         
-                $description = ($description) ? $classname . ' - ' . $description : $classname; 
+                $description = ($description) ? $classname . ' - ' . $description : $classname;
                 
                 $product_array[$classname] = $description;
             }
@@ -371,7 +399,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         
         
         // If we are creating a product, let us choose the product type
-        if(!$this->ID) {
+        if (!$this->ID) {
             $fields = new FieldList(
                 $rootTab = new TabSet("Root",
                     // Main Tab Fields
@@ -389,15 +417,16 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         } else {
             // If CMS Installed, use URLSegmentField, otherwise use text
             // field for URL
-            if(class_exists('SiteTreeURLSegmentField')) {     
-                $baseLink = Controller::join_links (
+            if (class_exists('SiteTreeURLSegmentField')) {
+                $baseLink = Controller::join_links(
                     Director::absoluteBaseURL()
                 );
                            
                 $url_field = SiteTreeURLSegmentField::create("URLSegment");
                 $url_field->setURLPrefix($baseLink);
-            } else
+            } else {
                 $url_field = TextField::create("URLSegment");
+            }
             
             $fields = new FieldList(
                 $rootTab = new TabSet("Root",
@@ -411,7 +440,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
                         ToggleCompositeField::create('Metadata', _t('CatalogueAdmin.MetadataToggle', 'Metadata'),
                             array(
                                 $metaFieldDesc = TextareaField::create("MetaDescription", $this->fieldLabel('MetaDescription')),
-                                $metaFieldExtra = TextareaField::create("ExtraMeta",$this->fieldLabel('ExtraMeta'))
+                                $metaFieldExtra = TextareaField::create("ExtraMeta", $this->fieldLabel('ExtraMeta'))
                             )
                         )->setHeadingLevel(4)
                     ),
@@ -475,11 +504,13 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         return $fields;
     }
 
-    public function getCMSValidator() {
+    public function getCMSValidator()
+    {
         $required = array("Title");
         
-        if(!$this->config()->auto_stock_id)
+        if (!$this->config()->auto_stock_id) {
             $required[] = "StockID";
+        }
         
         return new RequiredFields($required);
     }
@@ -493,25 +524,29 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      *
      * @return bool
      */
-    public function validURLSegment() {
+    public function validURLSegment()
+    {
         $objects_to_check = array(
             "CatalogueProduct",
             "CatalogueCategory"
         );
         
-        if(class_exists("SiteTree"))
+        if (class_exists("SiteTree")) {
             $objects_to_check[] = "SiteTree";
+        }
 
         $segment = Convert::raw2sql($this->URLSegment);
 
-        foreach($objects_to_check as $classname) {
+        foreach ($objects_to_check as $classname) {
             $return = $classname::get()
                 ->filter(array(
                     "URLSegment"=> $segment,
                     "ID:not"    => $this->ID
                 ));
 
-            if($return->exists()) return false;
+            if ($return->exists()) {
+                return false;
+            }
         }
 
         return true;
@@ -528,12 +563,15 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      * @param string $title Page title.
      * @return string Generated url segment
      */
-    public function generateURLSegment($title){
+    public function generateURLSegment($title)
+    {
         $filter = URLSegmentFilter::create();
         $t = $filter->filter($title);
 
         // Fallback to generic page name if path is empty (= no valid, convertable characters)
-        if(!$t || $t == '-' || $t == '-1') $t = "page-$this->ID";
+        if (!$t || $t == '-' || $t == '-1') {
+            $t = "page-$this->ID";
+        }
 
         // Hook for extensions
         $this->extend('updateURLSegment', $t, $title);
@@ -541,49 +579,53 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         return $t;
     }
 
-    public function onBeforeWrite() {
+    public function onBeforeWrite()
+    {
         parent::onBeforeWrite();
 
         // If there is no URLSegment set, generate one from Title
-        if((!$this->URLSegment || $this->URLSegment == 'new-product') && $this->Title) {
+        if ((!$this->URLSegment || $this->URLSegment == 'new-product') && $this->Title) {
             $this->URLSegment = $this->generateURLSegment($this->Title);
-        } else if($this->isChanged('URLSegment', 2)) {
+        } elseif ($this->isChanged('URLSegment', 2)) {
             // Do a strict check on change level, to avoid double encoding caused by
             // bogus changes through forceChange()
             $filter = URLSegmentFilter::create();
             $this->URLSegment = $filter->filter($this->URLSegment);
             // If after sanitising there is no URLSegment, give it a reasonable default
-            if(!$this->URLSegment) $this->URLSegment = "page-$this->ID";
+            if (!$this->URLSegment) {
+                $this->URLSegment = "page-$this->ID";
+            }
         }
 
         // Ensure that this object has a non-conflicting URLSegment value.
         $count = 2;
-        while(!$this->validURLSegment()) {
+        while (!$this->validURLSegment()) {
             $this->URLSegment = preg_replace('/-[0-9]+$/', null, $this->URLSegment) . '-' . $count;
             $count++;
         }
         
-        if($this->ID && $this->config()->auto_stock_id && !$this->StockID) {
+        if ($this->ID && $this->config()->auto_stock_id && !$this->StockID) {
             $title = "";
             
-            foreach(explode("-", $this->URLSegment) as $string) {
-                $string = substr($string,0,1);
+            foreach (explode("-", $this->URLSegment) as $string) {
+                $string = substr($string, 0, 1);
                 $title .= $string;
             }
             
             $this->StockID = $title . "-" . $this->ID;
-        } 
+        }
     }
     
-    public function requireDefaultRecords() {
+    public function requireDefaultRecords()
+    {
         parent::requireDefaultRecords();
         
         $records = CatalogueProduct::get()
             ->filter("ClassName", "CatalogueProduct");
         
-        if($records->exists()) {
+        if ($records->exists()) {
             // Alter any existing recods that might have the wrong classname
-            foreach($records as $product) {
+            foreach ($records as $product) {
                 $product->ClassName = "Product";
                 $product->write();
             }
@@ -591,7 +633,8 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         }
     }
     
-    public function providePermissions() {
+    public function providePermissions()
+    {
         return array(
             "CATALOGUE_ADD_PRODUCTS" => array(
                 'name' => 'Add products',
@@ -614,54 +657,64 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
         );
     }
 
-    public function canView($member = false) {
+    public function canView($member = false)
+    {
         return true;
     }
 
-    public function canCreate($member = null) {
-        if($member instanceof Member)
+    public function canCreate($member = null)
+    {
+        if ($member instanceof Member) {
             $memberID = $member->ID;
-        else if(is_numeric($member))
+        } elseif (is_numeric($member)) {
             $memberID = $member;
-        else
+        } else {
             $memberID = Member::currentUserID();
+        }
 
-        if($memberID && Permission::checkMember($memberID, array("ADMIN", "CATALOGUE_ADD_PRODUCTS")))
+        if ($memberID && Permission::checkMember($memberID, array("ADMIN", "CATALOGUE_ADD_PRODUCTS"))) {
             return true;
-        else if($memberID && $memberID == $this->CustomerID)
+        } elseif ($memberID && $memberID == $this->CustomerID) {
             return true;
+        }
 
         return true;
     }
 
-    public function canEdit($member = null) {
-        if($member instanceof Member)
+    public function canEdit($member = null)
+    {
+        if ($member instanceof Member) {
             $memberID = $member->ID;
-        else if(is_numeric($member))
+        } elseif (is_numeric($member)) {
             $memberID = $member;
-        else
+        } else {
             $memberID = Member::currentUserID();
+        }
 
-        if($memberID && Permission::checkMember($memberID, array("ADMIN", "CATALOGUE_EDIT_PRODUCTS")))
+        if ($memberID && Permission::checkMember($memberID, array("ADMIN", "CATALOGUE_EDIT_PRODUCTS"))) {
             return true;
-        else if($memberID && $memberID == $this->CustomerID)
+        } elseif ($memberID && $memberID == $this->CustomerID) {
             return true;
+        }
 
         return false;
     }
 
-    public function canDelete($member = null) {
-        if($member instanceof Member)
+    public function canDelete($member = null)
+    {
+        if ($member instanceof Member) {
             $memberID = $member->ID;
-        else if(is_numeric($member))
+        } elseif (is_numeric($member)) {
             $memberID = $member;
-        else
+        } else {
             $memberID = Member::currentUserID();
+        }
 
-        if($memberID && Permission::checkMember($memberID, array("ADMIN", "CATALOGUE_DELETE_PRODUCTS")))
+        if ($memberID && Permission::checkMember($memberID, array("ADMIN", "CATALOGUE_DELETE_PRODUCTS"))) {
             return true;
-        else if($memberID && $memberID == $this->CustomerID)
+        } elseif ($memberID && $memberID == $this->CustomerID) {
             return true;
+        }
 
         return false;
     }
