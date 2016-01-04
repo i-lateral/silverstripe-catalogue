@@ -240,9 +240,12 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
 	public function RelativeLink($action = null) {
         $base = $this->URLSegment;
 		
-		$this->extend('updateRelativeLink', $base, $action);
+		$return = $this->extend('updateRelativeLink', $base, $action);
 
-		return Controller::join_links($base, $action);
+        if($return && is_array($return))
+            return $return[count($return) - 1];
+        else
+            return Controller::join_links($base, $action);
 	}
     
     /**

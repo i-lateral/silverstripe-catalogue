@@ -109,7 +109,7 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
 	}
     
     /**
-	 * Return the link for this {@link Product}
+	 * Return the link for this {@link Category}
 	 *
 	 * 
 	 * @param string $action See {@link Link()}
@@ -118,9 +118,12 @@ class CatalogueCategory extends DataObject implements PermissionProvider {
 	public function RelativeLink($action = null) {
         $base = $this->URLSegment;
 		
-		$this->extend('updateRelativeLink', $base, $action);
+		$return = $this->extend('updateRelativeLink', $base, $action);
 
-		return Controller::join_links($base, $action);
+        if($return && is_array($return))
+            return $return[count($return) - 1];
+        else
+            return Controller::join_links($base, $action);
 	}
 
 
