@@ -60,6 +60,7 @@ class CatalogueURLController extends Controller {
     public function handleRequest(SS_HTTPRequest $request, DataModel $model) {
         $this->request = $request;
 		$this->setDataModel($model);
+        $catalogue_enabled = Catalogue::config()->enable_frontend;
 		
 		$this->pushCurrent();
 
@@ -95,9 +96,9 @@ class CatalogueURLController extends Controller {
             'Disabled' => 0
         );
         
-        if($object = CatalogueProduct::get()->filter($filter)->first()) {
+        if($catalogue_enabled && $object = CatalogueProduct::get()->filter($filter)->first()) {
             $controller = $this->controller_for($object);
-        } elseif($object = CatalogueCategory::get()->filter($filter)->first()) {
+        } elseif($catalogue_enabled && $object = CatalogueCategory::get()->filter($filter)->first()) {
             $controller = $this->controller_for($object);
         } elseif(class_exists('ModelAsController')) { // If CMS installed
             $controller = ModelAsController::create();

@@ -9,7 +9,9 @@ if(class_exists('Subsite')) {
 }
 
 // Setup google sitemaps
-if(class_exists("GoogleSitemap")) {
+$catalogue_enabled = Catalogue::config()->enable_frontend;
+
+if($catalogue_enabled && class_exists("GoogleSitemap")) {
     GoogleSitemap::register_dataobject('CatalogueProduct');
     GoogleSitemap::register_dataobject('CatalogueCategory');
 }
