@@ -248,25 +248,25 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
             return Controller::join_links($base, $action);
 	}
     
+    
     /**
      * We use this to tap into the categories "isSection" setup,
      * essentially adding the product's first category to the list
      * 
+     * @param $include_parent Include the direct parent of this product
+     * @return ArrayList 
      */
-    public function getAncestors() {
+    public function getAncestors($include_parent = false) {
         $ancestors = ArrayList::create();
         $object    = $this->Categories()->first();
         
-        // Either allow alteration of object, or returning of new one
-        $extension = $this->extend('updateFirstAncestor', $object);
-
-        // If returned object is correct, then reset 
-        if($extension && is_array($extension) && is_object($extension) && method_exists($extension,"getParent"))
-            $object = $extension[count($extension) - 1];
+        if($include_parent) $ancestors->push($object);
 
         while($object = $object->getParent()) {
             $ancestors->push($object);
         }
+        
+        $this->extend('updateAncestors', $ancestors);
 
         return $ancestors;
     }
@@ -326,12 +326,13 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      */
     public function Breadcrumbs($maxDepth = 20) {
         $items = array();
+        
+        $ancestors = $this->getAncestors(true);
 
-        if($this->Categories()->exists()) {
+        if($ancestors->exists()) {
             $items[] = $this;
-            $category = $this->Categories()->first();
 
-            foreach($category->parentStack() as $item) {
+            foreach($ancestors as $item) {
                 $items[] = $item;
             }
         }
