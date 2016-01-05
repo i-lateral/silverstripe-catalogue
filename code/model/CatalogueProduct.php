@@ -266,7 +266,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
             $ancestors->push($object);
         }
         
-        $this->extend('updateAncestors', $ancestors);
+        $this->extend('updateAncestors', $ancestors, $include_parent);
 
         return $ancestors;
     }
