@@ -255,8 +255,14 @@ class CatalogueProduct extends DataObject implements PermissionProvider {
      */
     public function getAncestors() {
         $ancestors = ArrayList::create();
-        
         $object    = $this->Categories()->first();
+        
+        // Either allow alteration of object, or returning of new one
+        $extension = $this->extend('updateFirstAncestor', $object);
+
+        // If returned object is correct, then reset 
+        if($extension && is_array($extension) && is_object($extension) && method_exists($extension,"getParent"))
+            $object = $extension[count($extension) - 1];
 
         while($object = $object->getParent()) {
             $ancestors->push($object);
