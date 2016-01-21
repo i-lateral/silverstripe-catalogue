@@ -10,7 +10,8 @@
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class TaxRate extends DataObject {
+class TaxRate extends DataObject
+{
     
     /**
      * @config
@@ -21,17 +22,19 @@ class TaxRate extends DataObject {
         "Code"  => "Varchar"
     );
     
-    public function getCMSValidator() {
+    public function getCMSValidator()
+    {
         return new RequiredFields(array(
             "Title",
             "Amount"
         ));
     }
     
-    public function requireDefaultRecords() {
+    public function requireDefaultRecords()
+    {
         
         // If no tax rates, setup some defaults
-        if(!TaxRate::get()->exists()) {
+        if (!TaxRate::get()->exists()) {
             $vat = TaxRate::create();
             $vat->Title = "VAT";
             $vat->Amount = 20;
@@ -56,5 +59,4 @@ class TaxRate extends DataObject {
         
         parent::requireDefaultRecords();
     }
-    
 }

@@ -6,7 +6,8 @@
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class CatalogueCategoryController extends CatalogueController {
+class CatalogueCategoryController extends CatalogueController
+{
 
 
     /**
@@ -14,7 +15,8 @@ class CatalogueCategoryController extends CatalogueController {
      *
      * @return PaginatedList
      */
-    public function PaginatedProducts($limit = 10) {
+    public function PaginatedProducts($limit = 10)
+    {
         return PaginatedList::create(
             $this->SortedProducts(),
             $this->request
@@ -27,7 +29,8 @@ class CatalogueCategoryController extends CatalogueController {
      *
      * @return PaginatedList
      */
-    public function PaginatedAllProducts($limit = 10) {
+    public function PaginatedAllProducts($limit = 10)
+    {
         return PaginatedList::create(
             $this->AllProducts(),
             $this->request
@@ -38,13 +41,16 @@ class CatalogueCategoryController extends CatalogueController {
      * The Controller will take the URLSegment parameter from the URL
      * and use that to look up a record.
      */
-    public function __construct($dataRecord = null) {
-        if(!$dataRecord) {
-			$dataRecord = new CatalogueCategory();
-			if($this->hasMethod("Title")) $dataRecord->Title = $this->Title();
-			$dataRecord->URLSegment = get_class($this);
-			$dataRecord->ID = -1;
-		}
+    public function __construct($dataRecord = null)
+    {
+        if (!$dataRecord) {
+            $dataRecord = new CatalogueCategory();
+            if ($this->hasMethod("Title")) {
+                $dataRecord->Title = $this->Title();
+            }
+            $dataRecord->URLSegment = get_class($this);
+            $dataRecord->ID = -1;
+        }
         
         $this->dataRecord = $dataRecord;
         $this->failover = $this->dataRecord;
@@ -54,7 +60,8 @@ class CatalogueCategoryController extends CatalogueController {
     /**
      * Get a list of templates to call and return a default render with
      */
-    public function index() {
+    public function index()
+    {
         $classes = ClassInfo::ancestry($this->dataRecord->class);
         $remove_classes = array(
             "Object",
@@ -66,9 +73,10 @@ class CatalogueCategoryController extends CatalogueController {
 
         array_push($classes, "Category", "Catalogue", "Page");
 
-        foreach($classes as $class) {
-            if(!in_array($class, $remove_classes))
+        foreach ($classes as $class) {
+            if (!in_array($class, $remove_classes)) {
                 $return[] = $class;
+            }
         }
 
         return $this->renderWith($return);
@@ -78,8 +86,9 @@ class CatalogueCategoryController extends CatalogueController {
      * Returns a fixed navigation menu of the given level.
      * @return SS_List
      */
-    public function CategoryMenu($level = 1) {
-        if($level == 1) {
+    public function CategoryMenu($level = 1)
+    {
+        if ($level == 1) {
             $result = CatalogueCategory::get()->filter(array(
                 "ParentID" => 0
             ));
@@ -87,20 +96,22 @@ class CatalogueCategoryController extends CatalogueController {
             $parent = $this->data();
             $stack = array($parent);
 
-            if($parent) {
-                while($parent = $parent->Parent) {
+            if ($parent) {
+                while ($parent = $parent->Parent) {
                     array_unshift($stack, $parent);
                 }
             }
 
-			if(isset($stack[$level-2])) $result = $stack[$level-2]->Children();
+            if (isset($stack[$level-2])) {
+                $result = $stack[$level-2]->Children();
+            }
         }
 
         $visible = array();
 
-        if(isset($result)) {
-            foreach($result as $item) {
-                if($item->canView()) {
+        if (isset($result)) {
+            foreach ($result as $item) {
+                if ($item->canView()) {
                     $visible[] = $item;
                 }
             }
@@ -108,5 +119,4 @@ class CatalogueCategoryController extends CatalogueController {
 
         return new ArrayList($visible);
     }
-
 }

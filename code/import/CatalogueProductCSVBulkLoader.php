@@ -6,7 +6,8 @@
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class CatalogueProductCSVBulkLoader extends CsvBulkLoader {
+class CatalogueProductCSVBulkLoader extends CsvBulkLoader
+{
     
     public $columnMap = array(
         "Product"   => "ClassName",
@@ -23,17 +24,19 @@ class CatalogueProductCSVBulkLoader extends CsvBulkLoader {
         'StockID'   => 'StockID'
     );
 
-    public function __construct($objectClass = null) {
-        
-        if(class_exists("Product")) {
-            if(!$objectClass || $objectClass == "CatalogueProduct")
+    public function __construct($objectClass = null)
+    {
+        if (class_exists("Product")) {
+            if (!$objectClass || $objectClass == "CatalogueProduct") {
                 $objectClass = 'Product';
+            }
         }
 
         parent::__construct($objectClass);
     }
 
-    public function processRecord($record, $columnMap, &$results, $preview = false) {
+    public function processRecord($record, $columnMap, &$results, $preview = false)
+    {
 
         // Get Current Object
         $objID = parent::processRecord($record, $columnMap, $results, $preview);
@@ -42,33 +45,39 @@ class CatalogueProductCSVBulkLoader extends CsvBulkLoader {
         $this->extend("onBeforeProcess", $object, $record, $columnMap, $results, $preview);
         
         // Loop through all fields and setup associations
-        foreach($record as $key => $value) {
+        foreach ($record as $key => $value) {
 
             // Find any categories (denoted by a 'CategoryXX' column)
-            if(strpos($key,'Category') !== false) {
+            if (strpos($key, 'Category') !== false) {
                 $category = CatalogueCategory::get()
                     ->filter("Title", $value)
                     ->first();
 
-                if($category) $object->Categories()->add($category);
+                if ($category) {
+                    $object->Categories()->add($category);
+                }
             }
             
             // Find any Images (denoted by a 'ImageXX' column)
-            if(strpos($key,'Image') !== false && $key != "Images") {
+            if (strpos($key, 'Image') !== false && $key != "Images") {
                 $image = Image::get()
                     ->filter("Name", $value)
                     ->first();
 
-                if($image) $object->Images()->add($image);
+                if ($image) {
+                    $object->Images()->add($image);
+                }
             }
             
             // Find any related products (denoted by a 'RelatedXX' column)
-            if(strpos($key,'Related') !== false && $key != "RelatedProducts") {
+            if (strpos($key, 'Related') !== false && $key != "RelatedProducts") {
                 $product = Product::get()
                     ->filter("StockID", $value)
                     ->first();
 
-                if($product) $object->RelatedProducts()->add($product);
+                if ($product) {
+                    $object->RelatedProducts()->add($product);
+                }
             }
         }
 
@@ -80,12 +89,14 @@ class CatalogueProductCSVBulkLoader extends CsvBulkLoader {
         return $objID;
     }
     
-    public static function importTaxPercent(&$obj, $val, $record) {
+    public static function importTaxPercent(&$obj, $val, $record)
+    {
         $tax_rate = TaxRate::get()
             ->filter("Amount", $val)
             ->first();
         
-        if($tax_rate) $obj->TaxRateID = $tax_rate->ID;
+        if ($tax_rate) {
+            $obj->TaxRateID = $tax_rate->ID;
+        }
     }
-
 }
