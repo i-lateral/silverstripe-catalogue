@@ -1,5 +1,5 @@
 <?php
 
-class ProductTypeField extends OptionSetField {
-    
+class ProductTypeField extends OptionSetField
+{
 }

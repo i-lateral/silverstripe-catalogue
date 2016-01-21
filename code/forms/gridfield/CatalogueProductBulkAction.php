@@ -6,7 +6,8 @@
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class CatalogueProductBulkAction extends GridFieldBulkActionHandler {
+class CatalogueProductBulkAction extends GridFieldBulkActionHandler
+{
 
     private static $allowed_actions = array(
         'disable',
@@ -18,10 +19,11 @@ class CatalogueProductBulkAction extends GridFieldBulkActionHandler {
         "enable" => "enable"
     );
 
-    public function disable(SS_HTTPRequest $request) {
+    public function disable(SS_HTTPRequest $request)
+    {
         $ids = array();
 
-        foreach($this->getRecords() as $record) {
+        foreach ($this->getRecords() as $record) {
             array_push($ids, $record->ID);
 
             $record->Disabled = 1;
@@ -38,10 +40,11 @@ class CatalogueProductBulkAction extends GridFieldBulkActionHandler {
         return $response;
     }
 
-    public function enable(SS_HTTPRequest $request) {
+    public function enable(SS_HTTPRequest $request)
+    {
         $ids = array();
 
-        foreach($this->getRecords() as $record) {
+        foreach ($this->getRecords() as $record) {
             array_push($ids, $record->ID);
 
             $record->Disabled = 0;

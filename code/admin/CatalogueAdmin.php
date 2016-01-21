@@ -7,7 +7,8 @@
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class CatalogueAdmin extends ModelAdmin {
+class CatalogueAdmin extends ModelAdmin
+{
     
     /**
      * Set the page length for products
@@ -40,17 +41,19 @@ class CatalogueAdmin extends ModelAdmin {
 
     public $showImportForm = array('Product');
 
-    public function init() {
+    public function init()
+    {
         parent::init();
     }
     
-    public function getExportFields() {
+    public function getExportFields()
+    {
         $fields = array(
             "Title" => "Title",
             "URLSegment" => "URLSegment"
         );
         
-        if($this->modelClass == 'Product') {
+        if ($this->modelClass == 'Product') {
             $fields["StockID"] = "StockID";
             $fields["ClassName"] = "Type";
             $fields["BasePrice"] = "Price";
@@ -65,15 +68,18 @@ class CatalogueAdmin extends ModelAdmin {
         return $fields;
     }
 
-    public function getList() {
+    public function getList()
+    {
         $list = parent::getList();
         
         // Filter categories
-        if($this->modelClass == 'Category') {
+        if ($this->modelClass == 'Category') {
             $parentID = $this->request->requestVar('ParentID');
-            if(!$parentID) $parentID = 0;
+            if (!$parentID) {
+                $parentID = 0;
+            }
 
-            $list = $list->filter('ParentID',$parentID);
+            $list = $list->filter('ParentID', $parentID);
         }
         
         $this->extend('updateList', $list);
@@ -81,7 +87,8 @@ class CatalogueAdmin extends ModelAdmin {
         return $list;
     }
 
-    public function getEditForm($id = null, $fields = null) {
+    public function getEditForm($id = null, $fields = null)
+    {
         $form = parent::getEditForm($id, $fields);
         $params = $this->request->requestVar('q');
         
@@ -102,7 +109,7 @@ class CatalogueAdmin extends ModelAdmin {
             'CatalogueProductBulkAction'
         );
 
-        if($this->modelClass == 'Product') {
+        if ($this->modelClass == 'Product') {
             $gridField = $form->Fields()->fieldByName('Product');
             $field_config = $gridField->getConfig();
 
@@ -127,7 +134,7 @@ class CatalogueAdmin extends ModelAdmin {
                 ->setItemsPerPage($this->config()->product_page_length);
 
             // Update list of items for subsite (if used)
-            if(class_exists('Subsite')) {
+            if (class_exists('Subsite')) {
                 $list = $gridField
                     ->getList()
                     ->filter(array(
@@ -139,7 +146,7 @@ class CatalogueAdmin extends ModelAdmin {
         }
         
         // Alterations for Hiarachy on product cataloge
-        if($this->modelClass == 'Category') {
+        if ($this->modelClass == 'Category') {
             $gridField = $form->Fields()->fieldByName('Category');
 
             // Set custom record editor
@@ -172,7 +179,7 @@ class CatalogueAdmin extends ModelAdmin {
             // Setup hierarchy view
             $parentID = $this->request->requestVar('ParentID');
 
-            if($parentID){
+            if ($parentID) {
                 $field_config->addComponent(
                     GridFieldLevelup::create($parentID)
                         ->setLinkSpec('?ParentID=%d')
@@ -191,7 +198,7 @@ class CatalogueAdmin extends ModelAdmin {
                 'URLSegment' => 'URLSegement'
             );
 
-            if(!$params) {
+            if (!$params) {
                 $fields = array_merge(array('listChildrenLink' => ''), $fields);
             }
 
@@ -200,7 +207,7 @@ class CatalogueAdmin extends ModelAdmin {
 
             $controller = $this;
             $columns->setFieldFormatting(array(
-                'listChildrenLink' => function($value, &$item) use($controller) {
+                'listChildrenLink' => function ($value, &$item) use ($controller) {
                     return sprintf(
                         '<a class="list-children-link" data-pjax-target="ListViewForm" href="%s?ParentID=%d">&#9658;</a>',
                         $controller->Link(),
@@ -210,7 +217,7 @@ class CatalogueAdmin extends ModelAdmin {
             ));
 
             // Update list of items for subsite (if used)
-            if(class_exists('Subsite')) {
+            if (class_exists('Subsite')) {
                 $list = $gridField
                     ->getList()
                     ->filter(array(
@@ -227,7 +234,8 @@ class CatalogueAdmin extends ModelAdmin {
     }
 }
 
-class CatalogueCategory_ItemRequest extends CatalogueEnableDisableDetailForm_ItemRequest {
+class CatalogueCategory_ItemRequest extends CatalogueEnableDisableDetailForm_ItemRequest
+{
     private static $allowed_actions = array(
         "ItemEditForm"
     );
@@ -240,11 +248,13 @@ class CatalogueCategory_ItemRequest extends CatalogueEnableDisableDetailForm_Ite
      * @param Controller $popupController
      * @param string $popupFormName
      */
-    public function __construct($gridField, $component, $record, $popupController, $popupFormName) {
+    public function __construct($gridField, $component, $record, $popupController, $popupFormName)
+    {
         parent::__construct($gridField, $component, $record, $popupController, $popupFormName);
     }
 
-    public function Link($action = null) {
+    public function Link($action = null)
+    {
         $parentParam = Controller::curr()->request->requestVar('ParentID');
         $link = $parentParam ? parent::Link() . "?ParentID=$parentParam" : parent::Link();
 
@@ -259,17 +269,20 @@ class CatalogueCategory_ItemRequest extends CatalogueEnableDisableDetailForm_Ite
      * @param boolean $unlinked
      * @return ArrayData
      */
-    function Breadcrumbs($unlinked = false) {
-        if(!$this->popupController->hasMethod('Breadcrumbs')) return;
+    public function Breadcrumbs($unlinked = false)
+    {
+        if (!$this->popupController->hasMethod('Breadcrumbs')) {
+            return;
+        }
 
         $items = $this->popupController->Breadcrumbs($unlinked);
-        if($this->record && $this->record->ID) {
+        if ($this->record && $this->record->ID) {
             $ancestors = $this->record->getAncestors();
             $ancestors = new ArrayList(array_reverse($ancestors->toArray()));
             $ancestors->push($this->record);
 
             // Push each ancestor to breadcrumbs
-            foreach($ancestors as $ancestor) {
+            foreach ($ancestors as $ancestor) {
                 $items->push(new ArrayData(array(
                     'Title' => $ancestor->Title,
                     'Link' => ($unlinked) ? false : $this->popupController->Link() . "?ParentID={$ancestor->ID}"
@@ -285,15 +298,16 @@ class CatalogueCategory_ItemRequest extends CatalogueEnableDisableDetailForm_Ite
         return $items;
     }
 
-    public function ItemEditForm() {
+    public function ItemEditForm()
+    {
         $form = parent::ItemEditForm();
 
-        if($form) {
+        if ($form) {
             // Update the default parent field
             $parentParam = Controller::curr()->request->requestVar('ParentID');
             $parent_field = $form->Fields()->dataFieldByName("ParentID");
 
-            if($parentParam && $parent_field) {
+            if ($parentParam && $parent_field) {
                 $parent_field->setValue($parentParam);
             }
 

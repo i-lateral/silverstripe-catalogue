@@ -7,7 +7,8 @@
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class CatalogueProductController extends CatalogueController {
+class CatalogueProductController extends CatalogueController
+{
 
     /**
      * Template names to be removed from the default template list 
@@ -33,7 +34,8 @@ class CatalogueProductController extends CatalogueController {
      *
      * @return string
      */
-    public function Link($action = null) {
+    public function Link($action = null)
+    {
         return $this->data()->Link(($action ? $action : true));
     }
 
@@ -41,20 +43,24 @@ class CatalogueProductController extends CatalogueController {
      * The Controller will take the URLSegment parameter from the URL
      * and use that to look up a record.
      */
-    public function __construct($dataRecord = null) {
-        if(!$dataRecord) {
-			$dataRecord = new CatalogueProduct();
-			if($this->hasMethod("Title")) $dataRecord->Title = $this->Title();
-			$dataRecord->URLSegment = get_class($this);
-			$dataRecord->ID = -1;
-		}
+    public function __construct($dataRecord = null)
+    {
+        if (!$dataRecord) {
+            $dataRecord = new CatalogueProduct();
+            if ($this->hasMethod("Title")) {
+                $dataRecord->Title = $this->Title();
+            }
+            $dataRecord->URLSegment = get_class($this);
+            $dataRecord->ID = -1;
+        }
         
         $this->dataRecord = $dataRecord;
         $this->failover = $this->dataRecord;
         parent::__construct();
     }
     
-    protected function get_index_templates() {
+    protected function get_index_templates()
+    {
         $classes = ClassInfo::ancestry($this->dataRecord->class);
         $classes = array_reverse($classes);
         $remove_classes = self::config()->classes_to_remove;
@@ -62,9 +68,10 @@ class CatalogueProductController extends CatalogueController {
 
         array_push($classes, "Catalogue", "Page");
 
-        foreach($classes as $class) {
-            if(!in_array($class, $remove_classes))
+        foreach ($classes as $class) {
+            if (!in_array($class, $remove_classes)) {
                 $return[] = $class;
+            }
         }
         
         return $return;
@@ -76,18 +83,21 @@ class CatalogueProductController extends CatalogueController {
      *
      * @return Image
      */
-    public function getImageForProduct() {
+    public function getImageForProduct()
+    {
         $images = $this->SortedImages();
         $action = $this->request->param('Action');
         $id = $this->request->param('ID');
 
         $image = null;
 
-        if($action && $action === "iid" && $id)
-            $image = $images->filter("ID",$id)->first();
+        if ($action && $action === "iid" && $id) {
+            $image = $images->filter("ID", $id)->first();
+        }
 
-        if(!$image)
+        if (!$image) {
             $image = $images->first();
+        }
             
         $this->extend("updateImageForProduct", $image);
 
@@ -97,7 +107,8 @@ class CatalogueProductController extends CatalogueController {
     /**
      * Get a list of templates to call and return a default render with
      */
-    public function index() {
+    public function index()
+    {
         $this->customise(array("ProductImage" => $this->getImageForProduct()));
         
         $this->extend("onBeforeIndex");
@@ -108,7 +119,8 @@ class CatalogueProductController extends CatalogueController {
     /**
      * Get a list of templates to call and return a default render with
      */
-    public function iid() {
+    public function iid()
+    {
         $this->customise(array("ProductImage" => $this->getImageForProduct()));
         
         $this->extend("onBeforeIndex");
@@ -125,7 +137,8 @@ class CatalogueProductController extends CatalogueController {
      * 
      * @return Form 
      */
-    public function Form() {
+    public function Form()
+    {
         $form = Form::create(
             $this,
             "Form",

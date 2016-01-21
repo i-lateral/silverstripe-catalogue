@@ -5,13 +5,15 @@
  * @author i-lateral (http://www.i-lateral.com)
  * @package product-catalogue
  */
-class CatalogueSiteConfigExtension extends DataExtension {
+class CatalogueSiteConfigExtension extends DataExtension
+{
     
     private static $has_one = array(
         'DefaultProductImage'    => 'Image'
     );
 
-    public function updateCMSFields(FieldList $fields) {
+    public function updateCMSFields(FieldList $fields)
+    {
         // Add config sets
         $fields->addFieldToTab(
             'Root.Catalogue',
@@ -41,5 +43,4 @@ class CatalogueSiteConfigExtension extends DataExtension {
             )
         );
     }
-    
 }
