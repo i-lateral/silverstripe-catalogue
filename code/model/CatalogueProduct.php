@@ -281,10 +281,12 @@ class CatalogueProduct extends DataObject implements PermissionProvider
         $ancestors = ArrayList::create();
         $object    = $this->Categories()->first();
         
-        if($include_parent) $ancestors->push($object);
+        if($object) {
+            if($include_parent) $ancestors->push($object);
 
-        while ($object = $object->getParent()) {
-            $ancestors->push($object);
+            while ($object = $object->getParent()) {
+                $ancestors->push($object);
+            }
         }
         
         $this->extend('updateAncestors', $ancestors, $include_parent);
