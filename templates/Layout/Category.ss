@@ -1,6 +1,6 @@
 <% include SideBar %>
 
-<div class="catalogue-content-container typography <% if $Menu(2) %>unit size3of4 unit-75<% end_if %>">
+<div class="catalogue-content-container typography <% if $Menu(2) %>unit size3of4 unit-75 col-md-9 <% end_if %> col-xs-12">
     <% if Level(2) %><p>$Breadcrumbs</p><% end_if %>
 
     <h1>$Title</h1>
@@ -18,9 +18,9 @@
     </div>
 
     <% if $PaginatedAllProducts(8).exists %>
-        <div class="units-row line catalogue-list">
+        <div class="units-row row line catalogue-list">
             <% loop $PaginatedAllProducts(8) %>
-                <div class="unit-25 unit size1of4 catalogue-list-child">
+                <div class="unit-25 unit size1of4 col-xs-12 col-md-3 catalogue-list-child">
                     <h2><a href="$Link">$Title</a></h2>
 
                     <p>

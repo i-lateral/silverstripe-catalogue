@@ -1,10 +1,10 @@
-<div class="catalogue-content-container catalogue-product typography">
+<div class="catalogue-content-container container catalogue-product typography">
     <p>$Breadcrumbs</p>
 
     <h1>$Title</h1>
 
-    <div class="units-row line">
-        <div class="unit-50 unit size1of2 catalogue-product-images">
+    <div class="units-row row line">
+        <div class="unit-50 unit size1of2 col-xs-12 col-sm-6 catalogue-product-images">
             <div id="catalogue-product-image">
                 <a href="{$ProductImage.SetRatioSize(900,550).URL}">
                     $ProductImage.PaddedImage(500,500)
@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <div class="unit-50 unit size1of2 catalogue-product-summary">
+        <div class="unit-50 unit size1of2 col-xs-12 col-sm-6 catalogue-product-summary">
             <p>
                 <span class="price label big label-green">
                     <span class="title"><%t Catalogue.Price "Price" %>:</span>
@@ -61,9 +61,9 @@
 
         <h2><%t Catalogue.RelatedProducts "Related Products" %></h2>
 
-        <div class="units-row catalogue-related-products line">
+        <div class="units-row row catalogue-related-products line">
             <% loop $RelatedProducts %>
-                <div class="unit-25 unit size1of4 catalogue-list-item">
+                <div class="unit-25 unit size1of4 col-xs-12 col-md-3 catalogue-list-item">
                     <h3><a href="$Link">$Title</a></h3>
 
                     <p>
@@ -86,7 +86,7 @@
                 </div>
 
                 <% if $MultipleOf(5) && not $Last %>
-                    </div><div class="units-row catalogue-related-products line">
+                    </div><div class="units-row row catalogue-related-products line">
                 <% end_if %>
             <% end_loop %>
         </div>
