@@ -128,15 +128,21 @@ class CatalogueProduct extends DataObject implements PermissionProvider
      * we can tap into extensions and allow third party modules to alter
      * this (to add items such as tax, bulk pricing, etc).
      *
-     * @return Currency
+     * @param int $decimal_size Should we round this number to a
+     *             specific size? If set will round the output.
+     * @return Float
      */
-    public function getPrice()
+    public function getPrice($decimal_size = null)
     {
         $price = $this->BasePrice;
         
         $new_price = $this->extend("updatePrice", $price);
         if ($new_price && is_array($new_price)) {
             $price = $new_price[0];
+        }
+        
+        if($decimal_size) {
+            $price = number_format($price, $decimal_size);
         }
         
         return $price;
@@ -147,9 +153,11 @@ class CatalogueProduct extends DataObject implements PermissionProvider
      * method using "UpdateTax" allowing third party modules to alter
      * tax amounts dynamically.
      *
-     * @return Currency
+     * @param int $decimal_size Should we round this number to a
+     *             specific size? If set will round the output. 
+     * @return Float
      */
-    public function getTax()
+    public function getTax($decimal_size = null)
     {
         $price = $this->BasePrice;
         
@@ -163,6 +171,10 @@ class CatalogueProduct extends DataObject implements PermissionProvider
         $new_tax = $this->extend("updateTax", $tax);
         if ($new_tax && is_array($new_tax)) {
             $tax = $new_tax[0];
+        }
+        
+        if($decimal_size) {
+            $tax = number_format($tax, $decimal_size);
         }
         
         return $tax;
@@ -181,15 +193,21 @@ class CatalogueProduct extends DataObject implements PermissionProvider
     /**
      * Get the final price of this product, including tax (if any)
      *
-     * @return Currency
+     * @param int $decimal_size Should we round this number to a
+     *             specific size? If set will round the output. 
+     * @return Float
      */
-    public function getPriceAndTax()
+    public function getPriceAndTax($decimal_size = null)
     {
         $price = $this->Price + $this->Tax;
         
         $new_price = $this->extend("updatePriceAndTax", $price);
         if ($new_price && is_array($new_price)) {
             $price = $new_price[0];
+        }
+        
+        if($decimal_size) {
+            $price = number_format($price, $decimal_size);
         }
         
         return $price;
