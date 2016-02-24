@@ -6,9 +6,9 @@
  * @package commerce
  * @subpackage tasks
  */
-class CommerceWriteItemsTask extends BuildTask {
+class CatalogueWriteAllItemsTask extends BuildTask {
 	
-	protected $title = 'Write All Commerce Items';
+	protected $title = 'Write All Products and Categories';
 	
 	protected $description = 'Loop through all products and product categories and re-save them.';
 	
