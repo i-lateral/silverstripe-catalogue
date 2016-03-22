@@ -53,6 +53,9 @@ class CatalogueEnableDisableDetailForm_ItemRequest extends GridFieldDetailForm_I
                 );
             }
         }
+        
+		$this->extend("updateItemEditForm", $form);
+        
         return $form;
     }
 
