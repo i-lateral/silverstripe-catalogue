@@ -232,6 +232,64 @@ class CatalogueAdmin extends ModelAdmin
 
         return $form;
     }
+
+    /**
+     * CMS-specific functionality: Passes through navigation breadcrumbs
+     * to the template, and includes the currently edited record (if any).
+     * see {@link LeftAndMain->Breadcrumbs()} for details.
+     *
+     * @param boolean $unlinked
+     * @return ArrayData
+     */
+    public function Breadcrumbs($unlinked = false)
+    {
+		$items = parent::Breadcrumbs($unlinked);
+        
+        if ($this->modelClass == 'Category') {
+            //special case for building the breadcrumbs when calling the listchildren Pages ListView action
+            if($parentID = $this->getRequest()->getVar('ParentID')) {
+                // Rebuild items so we can get the right order
+                $first_item = $items->first();
+                $first_item->Link = $this->Link();
+                $last_item = $items->last();
+                $items = ArrayList::create();
+                
+                $category = DataObject::get_by_id('CatalogueCategory', $parentID);
+                
+                $categories = array();
+
+                //build a reversed list of the parent tree
+                while($category) {
+                    array_unshift($categories, $category); //add to start of array so that array is in reverse order
+                    $category = $category->Parent;
+                }
+
+                //turns the title and link of the breadcrumbs into template-friendly variables
+                $params = array_filter(array(
+                    'view' => $this->getRequest()->getVar('view'),
+                    'q' => $this->getRequest()->getVar('q')
+                ));
+                
+                $items->push($first_item);
+                
+                foreach($categories as $category) {
+                    $params['ParentID'] = $category->ID;
+                    $item = new StdClass();
+                    $item->Title = $category->Title;
+                    $item->Link = Controller::join_links($this->Link(), '?' . http_build_query($params));
+                    $items->push(new ArrayData($item));
+                }
+                
+                // Dont add the last item if it is the same as the
+                // first item
+                if ($last_item->Title != $first_item->Title) {
+                    $items->push($last_item);
+                }
+            }
+        }
+
+		return $items;
+	}
 }
 
 class CatalogueCategory_ItemRequest extends CatalogueEnableDisableDetailForm_ItemRequest
@@ -271,32 +329,49 @@ class CatalogueCategory_ItemRequest extends CatalogueEnableDisableDetailForm_Ite
      */
     public function Breadcrumbs($unlinked = false)
     {
-        if (!$this->popupController->hasMethod('Breadcrumbs')) {
-            return;
-        }
+		$items = parent::Breadcrumbs($unlinked);
 
-        $items = $this->popupController->Breadcrumbs($unlinked);
-        if ($this->record && $this->record->ID) {
-            $ancestors = $this->record->getAncestors();
-            $ancestors = new ArrayList(array_reverse($ancestors->toArray()));
-            $ancestors->push($this->record);
+		//special case for building the breadcrumbs when calling the listchildren Pages ListView action
+		if($parentID = $this->getRequest()->getVar('ParentID')) {
+            $controller = Controller::curr();
+            
+            // Rebuild items so we can get the right order
+            $first_item = $items->first();
+            $first_item->Link = $controller->Link();
+            $last_item = $items->last();
+            $items = ArrayList::create();
+            
+			$category = DataObject::get_by_id('CatalogueCategory', $parentID);
+            
+            $categories = array();
 
-            // Push each ancestor to breadcrumbs
-            foreach ($ancestors as $ancestor) {
-                $items->push(new ArrayData(array(
-                    'Title' => $ancestor->Title,
-                    'Link' => ($unlinked) ? false : $this->popupController->Link() . "?ParentID={$ancestor->ID}"
-                )));
-            }
-        } else {
-            $items->push(new ArrayData(array(
-                'Title' => sprintf(_t('GridField.NewRecord', 'New %s'), $this->record->singular_name()),
-                'Link' => false
-            )));
-        }
+			//build a reversed list of the parent tree
+			while($category) {
+				array_unshift($categories, $category); //add to start of array so that array is in reverse order
+				$category = $category->Parent;
+			}
 
-        return $items;
-    }
+			//turns the title and link of the breadcrumbs into template-friendly variables
+			$params = array_filter(array(
+				'view' => $this->getRequest()->getVar('view'),
+				'q' => $this->getRequest()->getVar('q')
+			));
+            
+            $items->push($first_item);
+            
+			foreach($categories as $category) {
+				$params['ParentID'] = $category->ID;
+				$item = new StdClass();
+				$item->Title = $category->Title;
+				$item->Link = Controller::join_links($controller->Link(), '?' . http_build_query($params));
+				$items->push(new ArrayData($item));
+			}
+            
+            $items->push($last_item);
+		}
+
+		return $items;
+	}
 
     public function ItemEditForm()
     {
