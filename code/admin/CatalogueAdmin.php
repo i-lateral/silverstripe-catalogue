@@ -45,6 +45,29 @@ class CatalogueAdmin extends ModelAdmin
     {
         parent::init();
     }
+
+    /**
+     * Get a list of subclasses for the chosen type (either CatalogueProduct
+     * or CatalogueCategory).
+     *
+     * @return array
+     */
+    protected function get_classes_list(GridField $grid) {
+        // Get a list of available product classes
+        $classnames = ClassInfo::subclassesFor($grid->getModelClass());
+        $return = array();
+
+        foreach ($classnames as $classname) {
+            $instance = singleton($classname);
+            $description = Config::inst()->get($classname, 'description');                    
+            $description = ($description) ? $instance->i18n_singular_name() . ': ' . $description : $instance->i18n_singular_name();
+            
+            $return[$classname] = $description;
+        }
+
+        asort($return);
+        return $return;
+    }
     
     public function getExportFields()
     {
@@ -92,7 +115,6 @@ class CatalogueAdmin extends ModelAdmin
         $form = parent::getEditForm($id, $fields);
         $params = $this->request->requestVar('q');
         
-        
         // Bulk manager
         $manager = new GridFieldBulkManager();
         $manager->removeBulkAction("unLink");
@@ -109,20 +131,21 @@ class CatalogueAdmin extends ModelAdmin
             'CatalogueProductBulkAction'
         );
 
+        $gridField = $form->Fields()->fieldByName($this->modelClass);
+        $field_config = $gridField->getConfig();
+
+        $add_button = new GridFieldAddNewMultiClass("buttons-before-left");
+        $add_button->setClasses($this->get_classes_list($gridField));
+
         if ($this->modelClass == 'Product') {
-            $gridField = $form->Fields()->fieldByName('Product');
-            $field_config = $gridField->getConfig();
-
-            // Re add creation button and update grid field
-            $add_button = new GridFieldAddNewButton('buttons-before-left');
-            $add_button->setButtonName(_t("CatalogueAdmin.AddProduct", "Add Product"));
-
             $field_config
                 ->removeComponentsByType('GridFieldPrintButton')
                 ->removeComponentsByType('GridFieldAddNewButton')
+                ->removeComponentsByType('GridFieldExportButton')
                 ->removeComponentsByType('GridFieldDetailForm')
                 ->addComponents(
                     $add_button,
+                    new GridFieldExportButton("buttons-before-right"),
                     $manager,
                     new CatalogueEnableDisableDetailForm()
                 );
@@ -147,14 +170,6 @@ class CatalogueAdmin extends ModelAdmin
         
         // Alterations for Hiarachy on product cataloge
         if ($this->modelClass == 'Category') {
-            $gridField = $form->Fields()->fieldByName('Category');
-
-            // Create add button and update grid field
-            $add_button = new GridFieldAddNewButton('toolbar-header-left');
-            $add_button->setButtonName(_t("CatalogueAdmin.AddCategory", "Add Category"));
-
-            // Tidy up category config
-            $field_config = $gridField->getConfig();
             $field_config
                 ->removeComponentsByType('GridFieldExportButton')
                 ->removeComponentsByType('GridFieldPrintButton')

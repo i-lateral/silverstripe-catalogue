@@ -27,7 +27,7 @@ class CatalogueEnableDisableDetailForm_ItemRequest extends GridFieldDetailForm_I
     public function ItemEditForm()
     {
         $form = parent::ItemEditForm();
-        
+
 		if ($form && $this->record->ID !== 0 && $this->record->canEdit()) {
 			$fields = $form->Fields();
 			$actions = $form->Actions();
