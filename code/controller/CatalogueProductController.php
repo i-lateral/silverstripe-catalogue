@@ -9,20 +9,6 @@
  */
 class CatalogueProductController extends CatalogueController
 {
-
-    /**
-     * Template names to be removed from the default template list 
-     * 
-     * @var array
-     * @config
-     */
-    private static $classes_to_remove = array(
-        "Object",
-        "ViewableData",
-        "DataObject",
-        "CatalogueProduct"
-    );
-
     private static $allowed_actions = array(
         'iid',
         'Form'
@@ -59,24 +45,6 @@ class CatalogueProductController extends CatalogueController
         parent::__construct();
     }
     
-    protected function get_index_templates()
-    {
-        $classes = ClassInfo::ancestry($this->dataRecord->class);
-        $classes = array_reverse($classes);
-        $remove_classes = self::config()->classes_to_remove;
-        $return = array();
-
-        array_push($classes, "Catalogue", "Page");
-
-        foreach ($classes as $class) {
-            if (!in_array($class, $remove_classes)) {
-                $return[] = $class;
-            }
-        }
-        
-        return $return;
-    }
-    
     /**
      * The productimage action is used to determine the default image that will
      * appear related to a product
@@ -85,10 +53,9 @@ class CatalogueProductController extends CatalogueController
      */
     public function getImageForProduct()
     {
+        $image = null;
         $action = $this->request->param('Action');
         $id = $this->request->param('ID');
-
-        $image = null;
 
         if ($action && $action === "iid" && $id) {
             $image = $this->Images()->byID($id);
@@ -108,11 +75,15 @@ class CatalogueProductController extends CatalogueController
      */
     public function index()
     {
-        $this->customise(array("ProductImage" => $this->getImageForProduct()));
+        $this->customise(array(
+            "ProductImage" => $this->getImageForProduct()
+        ));
         
         $this->extend("onBeforeIndex");
+
+        $classes = CatalogueHelper::get_templates_for_class($this->dataRecord->class);
         
-        return $this->renderWith($this->get_index_templates());
+        return $this->renderWith($classes);
     }
     
     /**
@@ -120,15 +91,17 @@ class CatalogueProductController extends CatalogueController
      */
     public function iid()
     {
-        $this->customise(array("ProductImage" => $this->getImageForProduct()));
+        $this->customise(array(
+            "ProductImage" => $this->getImageForProduct()
+        ));
         
-        $this->extend("onBeforeIndex");
+        $this->extend("onBeforeIID");
         
-        return $this->renderWith($this->get_index_templates());
+        $classes = CatalogueHelper::get_templates_for_class($this->dataRecord->class);
+        
+        return $this->renderWith($classes);
     }
 
-    
-    
     /**
      * Create a form to associate with this product, by default it will
      * be empty, but is intended to be easily extendable to allow "add

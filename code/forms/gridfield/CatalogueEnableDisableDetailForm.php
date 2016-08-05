@@ -27,10 +27,11 @@ class CatalogueEnableDisableDetailForm_ItemRequest extends GridFieldDetailForm_I
     public function ItemEditForm()
     {
         $form = parent::ItemEditForm();
-        $fields = $form->Fields();
-        $actions = $form->Actions();
+
+		if ($form && $this->record->ID !== 0 && $this->record->canEdit()) {
+			$fields = $form->Fields();
+			$actions = $form->Actions();
         
-        if ($this->record->ID !== 0 && $this->record->canEdit()) {
             // Remove the disabled field
             $fields->removeByName("Disabled");
             
@@ -53,6 +54,9 @@ class CatalogueEnableDisableDetailForm_ItemRequest extends GridFieldDetailForm_I
                 );
             }
         }
+        
+		$this->extend("updateItemEditForm", $form);
+        
         return $form;
     }
 

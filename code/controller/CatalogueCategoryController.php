@@ -61,25 +61,12 @@ class CatalogueCategoryController extends CatalogueController
      * Get a list of templates to call and return a default render with
      */
     public function index()
-    {
-        $classes = ClassInfo::ancestry($this->dataRecord->class);
-        $remove_classes = array(
-            "Object",
-            "ViewableData",
-            "DataObject"
-        );
+    {   
+        $this->extend("onBeforeIndex");
 
-        $return = array();
+        $classes = CatalogueHelper::get_templates_for_class($this->dataRecord->class);
 
-        array_push($classes, "Category", "Catalogue", "Page");
-
-        foreach ($classes as $class) {
-            if (!in_array($class, $remove_classes)) {
-                $return[] = $class;
-            }
-        }
-
-        return $this->renderWith($return);
+        return $this->renderWith($classes);
     }
     
     /**

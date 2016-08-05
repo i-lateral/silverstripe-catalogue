@@ -410,113 +410,89 @@ class CatalogueProduct extends DataObject implements PermissionProvider
     public function getCMSFields()
     {
         // Get a list of available product classes
-        $classnames = ClassInfo::getValidSubClasses("CatalogueProduct");
-        $product_array = array();
-        
-        foreach ($classnames as $classname) {
-            if ($classname != "CatalogueProduct") {
-                $description = Config::inst()->get($classname, 'description');
-                
-                if ($classname == 'Product' && !$description) {
-                    $description = self::config()->description;
-                }
-                        
-                $description = ($description) ? $classname . ' - ' . $description : $classname;
-                
-                $product_array[$classname] = $description;
-            }
-        }
-        
-        
-        // If we are creating a product, let us choose the product type
-        if (!$this->ID) {
-            $fields = new FieldList(
-                $rootTab = new TabSet("Root",
-                    // Main Tab Fields
-                    $tabMain = new Tab('Main',
-                        HiddenField::create("Title")
-                            ->setValue(_t("Catalogue.NewProduct", "New Product")),
-                        ProductTypeField::create(
-                            "ClassName",
-                            _t("Catalogue.SelectProductType", "Select a type of Product"),
-                           $product_array
-                        )
-                    )
-                )
-            );
-        } else {
-            // If CMS Installed, use URLSegmentField, otherwise use text
-            // field for URL
-            if (class_exists('SiteTreeURLSegmentField')) {
-                $baseLink = Controller::join_links(
-                    Director::absoluteBaseURL()
-                );
-                           
-                $url_field = SiteTreeURLSegmentField::create("URLSegment");
-                $url_field->setURLPrefix($baseLink);
-            } else {
-                $url_field = TextField::create("URLSegment");
-            }
-            
-            $fields = new FieldList(
-                $rootTab = new TabSet("Root",
-                    // Main Tab Fields
-                    $tabMain = new Tab('Main',
-                        TextField::create("Title", $this->fieldLabel('Title')),
-                        $url_field,
-                        HTMLEditorField::create('Content', $this->fieldLabel('Content'))
-                            ->setRows(20)
-                            ->addExtraClass('stacked'),
-                        ToggleCompositeField::create('Metadata', _t('CatalogueAdmin.MetadataToggle', 'Metadata'),
-                            array(
-                                $metaFieldDesc = TextareaField::create("MetaDescription", $this->fieldLabel('MetaDescription')),
-                                $metaFieldExtra = TextareaField::create("ExtraMeta", $this->fieldLabel('ExtraMeta'))
-                            )
-                        )->setHeadingLevel(4)
-                    ),
-                    $tabSettings = new Tab('Settings',
-                        NumericField::create("BasePrice", _t("Catalogue.Price", "Price")),
-                        TextField::create("StockID", $this->fieldLabel('StockID'))
-                            ->setRightTitle(_t("Catalogue.StockIDHelp", "For example, a product SKU")),
-                        DropdownField::create(
-                            "TaxRateID",
-                            $this->fieldLabel('TaxRate'),
-                            TaxRate::get()->map()
-                        )->setEmptyString(_t("Catalogue.None", "None")),
-                        TreeMultiSelectField::create("Categories", null, "CatalogueCategory"),
-                        CheckboxField::create(
-                            "Disabled",
-                            _t("Catalogue.DisableProduct", "Disable this product (will not appear on shopfront)")
-                        ),
-                        DropdownField::create(
-                            "ClassName",
-                            _t("CatalogueAdmin.ProductType", "Type of product"),
-                            $product_array
-                        )
-                    ),
-                    $tabImages = new Tab('Images',
-                        SortableUploadField::create('Images', $this->fieldLabel('Images'), $this->Images())
-                    )
-                )
-            );
+        $classnames = array_values(ClassInfo::subclassesFor("Product"));
+        $product_types = array();
 
-            // Help text for MetaData on page content editor
-            $metaFieldDesc
-                ->setRightTitle(
-                    _t(
-                        'CatalogueAdmin.MetaDescHelp',
-                        "Search engines use this content for displaying search results (although it will not influence their ranking)."
+        foreach ($classnames as $classname) {
+            $instance = singleton($classname);
+            $product_types[$classname] = $instance->i18n_singular_name();
+        }
+
+        // If CMS Installed, use URLSegmentField, otherwise use text
+        // field for URL
+        if (class_exists('SiteTreeURLSegmentField')) {
+            $baseLink = Controller::join_links(
+                Director::absoluteBaseURL()
+            );
+                        
+            $url_field = SiteTreeURLSegmentField::create("URLSegment");
+            $url_field->setURLPrefix($baseLink);
+        } else {
+            $url_field = TextField::create("URLSegment");
+        }
+
+        $fields = new FieldList(
+            $rootTab = new TabSet("Root",
+                // Main Tab Fields
+                $tabMain = new Tab('Main',
+                    TextField::create("Title", $this->fieldLabel('Title')),
+                    $url_field,
+                    HTMLEditorField::create('Content', $this->fieldLabel('Content'))
+                        ->setRows(20)
+                        ->addExtraClass('stacked'),
+                    ToggleCompositeField::create('Metadata', _t('CatalogueAdmin.MetadataToggle', 'Metadata'),
+                        array(
+                            $metaFieldDesc = TextareaField::create("MetaDescription", $this->fieldLabel('MetaDescription')),
+                            $metaFieldExtra = TextareaField::create("ExtraMeta", $this->fieldLabel('ExtraMeta'))
+                        )
+                    )->setHeadingLevel(4)
+                ),
+                $tabSettings = new Tab('Settings',
+                    NumericField::create("BasePrice", _t("Catalogue.Price", "Price")),
+                    TextField::create("StockID", $this->fieldLabel('StockID'))
+                        ->setRightTitle(_t("Catalogue.StockIDHelp", "For example, a product SKU")),
+                    DropdownField::create(
+                        "TaxRateID",
+                        $this->fieldLabel('TaxRate'),
+                        TaxRate::get()->map()
+                    )->setEmptyString(_t("Catalogue.None", "None")),
+                    TreeMultiSelectField::create("Categories", null, "CatalogueCategory"),
+                    DropdownField::create(
+                        "ClassName",
+                        _t("CatalogueAdmin.ProductType", "Type of product"),
+                        $product_types
                     )
                 )
-                ->addExtraClass('help');
-            $metaFieldExtra
-                ->setRightTitle(
-                    _t(
-                        'CatalogueAdmin.MetaExtraHelp',
-                        "HTML tags for additional meta information. For example &lt;meta name=\"customName\" content=\"your custom content here\" /&gt;"
-                    )
+            )
+        );
+
+        // Help text for MetaData on page content editor
+        $metaFieldDesc
+            ->setRightTitle(
+                _t(
+                    'CatalogueAdmin.MetaDescHelp',
+                    "Search engines use this content for displaying search results (although it will not influence their ranking)."
                 )
-                ->addExtraClass('help');
+            )
+            ->addExtraClass('help');
+        $metaFieldExtra
+            ->setRightTitle(
+                _t(
+                    'CatalogueAdmin.MetaExtraHelp',
+                    "HTML tags for additional meta information. For example &lt;meta name=\"customName\" content=\"your custom content here\" /&gt;"
+                )
+            )
+            ->addExtraClass('help');
+
+        if ($this->ID) {
+            $fields->addFieldToTab(
+                'Root.Images',
+                SortableUploadField::create(
+                    'Images',
+                    $this->fieldLabel('Images'),
+                    $this->Images()
+                )
+            );
 
             $fields->addFieldToTab(
                 'Root.Related',
