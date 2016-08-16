@@ -500,7 +500,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider
                     'RelatedProducts',
                     "",
                     $this->RelatedProducts(),
-                    GridFieldConfig_RelationEditor::create()
+                    new GridFieldConfig_CatalogueRelated("Product")
                 )
             );
         }
