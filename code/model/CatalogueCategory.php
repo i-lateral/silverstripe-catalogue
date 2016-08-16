@@ -291,6 +291,8 @@ class CatalogueCategory extends DataObject implements PermissionProvider
 
     public function getCMSFields()
     {
+        $fields = parent::getCMSFields();
+
         // Get a list of available product classes
         $classnames = array_values(ClassInfo::subclassesFor("Category"));
         $category_types = array();
@@ -312,29 +314,31 @@ class CatalogueCategory extends DataObject implements PermissionProvider
         } else {
             $url_field = TextField::create("URLSegment");
         }
-                
-        $fields = new FieldList(
-            $rootTab = new TabSet("Root",
-                // Main Tab Fields
-                $tabMain = new Tab('Main',
-                    TextField::create("Title", $this->fieldLabel('Title')),
-                    $url_field,
-                    TreeDropdownField::create('ParentID', _t('CatalogueAdmin.ParentCategory', 'Parent Category'), 'CatalogueCategory')
-                        ->setLabelField("Title"),
-                    ToggleCompositeField::create('Metadata', _t('CatalogueAdmin.MetadataToggle', 'Metadata'),
-                        array(
-                            $metaFieldDesc = TextareaField::create("MetaDescription", $this->fieldLabel('MetaDescription')),
-                            $metaFieldExtra = TextareaField::create("ExtraMeta", $this->fieldLabel('ExtraMeta'))
+
+        $fields->removeByName("Sort");
+        $fields->removeByName("Disabled");
+        $fields->removeByName("MetaDescription");
+        $fields->removeByName("ExtraMeta");
+        $fields->removeByName("Products");
+
+        $fields->addFieldsToTab(
+            "Root.Main",
+            array(
+                $url_field,
+                ToggleCompositeField::create(
+                    'Metadata',
+                    _t('CatalogueAdmin.MetadataToggle', 'Metadata'),
+                    array(
+                        $metaFieldDesc = TextareaField::create(
+                            "MetaDescription",
+                            $this->fieldLabel('MetaDescription')
+                        ),
+                        $metaFieldExtra = TextareaField::create(
+                            "ExtraMeta",
+                            $this->fieldLabel('ExtraMeta')
                         )
-                    )->setHeadingLevel(4)
-                ),
-                $tabSettings = new Tab('Settings',
-                    DropdownField::create(
-                        "ClassName",
-                        _t("CatalogueAdmin.CategoryType", "Type of Category"),
-                        $category_types
                     )
-                )
+                )->setHeadingLevel(4)
             )
         );
         
@@ -355,16 +359,62 @@ class CatalogueCategory extends DataObject implements PermissionProvider
                 )
             )->addExtraClass('help');
         
-        if ($this->ID) {
+        if ($this->exists()) {
+
+            // Ensure that we set the parent ID to the current category
+            // when creating a new record 
+            $child_config = GridFieldConfig_Catalogue::create("Category", null, "Sort");
+            $child_edit = $child_config->getComponentByType('GridFieldDetailForm');
+
+            $self = $this; // PHP 5.3 support - $this can't be used in closures
+            $child_edit->setItemEditFormCallback(function($form, $itemRequest) use ($self) {
+                $record = $form->getRecord();
+
+                if (!$record->ID) {
+                    $parent_field = $form->Fields()->dataFieldByName("ParentID");
+                    $parent_field->setValue($self->ID);
+                }
+            });
+
+            $fields->addFieldToTab(
+                'Root.Children',
+                GridField::create(
+                    "Children",
+                    "",
+                    Category::get()->filter("ParentID", $this->ID),
+                    $child_config
+                )
+            );
+
             $fields->addFieldToTab(
                 'Root.Products',
                 GridField::create(
                     "Products",
                     "",
                     $this->Products(),
-                    GridFieldConfig_RelationEditor::create()
-                        ->addComponent(new GridFieldOrderableRows('SortOrder'))
+                    new GridFieldConfig_CatalogueRelated("Product", null, "SortOrder")
                 )
+            );
+        }
+
+        $fields->addFieldToTab(
+            "Root.Settings",
+            DropdownField::create(
+                "ClassName",
+                _t("CatalogueAdmin.CategoryType", "Type of Category"),
+                $category_types
+            )
+        );
+
+        if ($this->exists()) {
+            $fields->addFieldToTab(
+                "Root.Settings",
+                TreeDropdownField::create(
+                    "ParentID",
+                    _t("CatalogueAdmin.ParentCategory", "Parent Category"),
+                    "CatalogueCategory"
+                )->setLabelField("Title")
+                ->setKeyField("ID")
             );
         }
         
