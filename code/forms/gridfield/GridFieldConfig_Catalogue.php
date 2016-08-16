@@ -92,7 +92,5 @@ class GridFieldConfig_Catalogue extends GridFieldConfig {
 		$sort->setThrowExceptionOnBadDataType(false);
 		$filter->setThrowExceptionOnBadDataType(false);
 		$pagination->setThrowExceptionOnBadDataType(false);
-
-		$this->extend('updateConfig');
 	}
 }

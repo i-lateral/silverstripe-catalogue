@@ -24,7 +24,5 @@ class GridFieldConfig_CatalogueRelated extends GridFieldConfig_Catalogue {
 
 		$this->addComponent(new GridFieldAddExistingAutocompleter('buttons-before-right'));
 		$this->addComponent(new GridFieldDeleteAction(true));
-
-		$this->extend('updateConfig');
 	}
 }
