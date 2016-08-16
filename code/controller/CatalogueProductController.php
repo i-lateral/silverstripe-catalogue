@@ -53,18 +53,16 @@ class CatalogueProductController extends CatalogueController
      */
     public function getImageForProduct()
     {
-        $sorted_images = $this->SortedImages();
-        $images = $this->Images();
         $image = null;
         $action = $this->request->param('Action');
         $id = $this->request->param('ID');
 
         if ($action && $action === "iid" && $id) {
-            $image = $images->find("ID", $id);
+            $image = $this->Images()->byID($id);
         }
 
         if (!$image) {
-            $image = $sorted_images->first();
+            $image = $this->SortedImages()->first();
         }
             
         $this->extend("updateImageForProduct", $image);
