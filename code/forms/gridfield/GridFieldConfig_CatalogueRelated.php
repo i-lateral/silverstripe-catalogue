@@ -16,7 +16,7 @@ class GridFieldConfig_CatalogueRelated extends GridFieldConfig_Catalogue {
 	 * @param boolean | string $sorting Allow sorting of rows, either false or the name of the sort column
 	 */
 	public function __construct($classname, $itemsPerPage=null, $sort_col = false) {
-		parent::__construct($classname, $itemsPerPage=null, $sort_col = false);
+		parent::__construct($classname, $itemsPerPage, $sort_col);
 
 		// Remove uneeded components
 		$this->removeComponentsByType('GridFieldDeleteAction');
@@ -24,5 +24,8 @@ class GridFieldConfig_CatalogueRelated extends GridFieldConfig_Catalogue {
 
 		$this->addComponent(new GridFieldAddExistingAutocompleter('buttons-before-right'));
 		$this->addComponent(new GridFieldDeleteAction(true));
+		if ($sort_col != false) {
+			$this->addComponent(new GridFieldOrderableRows($sort_col));
+		}
 	}
 }

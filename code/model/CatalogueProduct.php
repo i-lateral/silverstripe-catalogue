@@ -52,7 +52,8 @@ class CatalogueProduct extends DataObject implements PermissionProvider
     );
 
     private static $many_many_extraFields = array(
-        "Images" => array("SortOrder" => "Int")
+        "Images" => array("SortOrder" => "Int"),
+        'RelatedProducts' => array('SortOrder' => 'Int')
     );
 
     private static $belongs_many_many = array(
@@ -500,7 +501,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider
                     'RelatedProducts',
                     "",
                     $this->RelatedProducts(),
-                    new GridFieldConfig_CatalogueRelated("Product")
+                    new GridFieldConfig_CatalogueRelated("Product",null,'SortOrder')
                 )
             );
         }
