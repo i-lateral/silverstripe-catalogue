@@ -319,6 +319,21 @@ class CatalogueProduct extends DataObject implements PermissionProvider
     }
 
     /**
+     * Return sorted products related to this product
+     *
+     * @return ArrayList
+     */
+    public function SortedRelatedProducts()
+    {
+        return $this
+            ->RelatedProducts()
+            ->Sort(array(
+                "SortOrder" => "ASC",
+                "Title" => "ASC"
+            ));
+    }
+
+    /**
      * Return sorted images, if no images exist, create a new opbject set
      * with a blank product image in it.
      *

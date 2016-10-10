@@ -56,13 +56,13 @@
     </div>
 
     <%-- Related Products: Only loaded when added through the CMS --%>
-    <% if $RelatedProducts.exists %>
+    <% if $SortedRelatedProducts.exists %>
         <hr/>
 
         <h2><%t Catalogue.RelatedProducts "Related Products" %></h2>
 
         <div class="units-row row catalogue-related-products line">
-            <% loop $RelatedProducts %>
+            <% loop $SortedRelatedProducts %>
                 <div class="unit-25 unit size1of4 col-xs-12 col-md-3 catalogue-list-item">
                     <h3><a href="$Link">$Title</a></h3>
 
