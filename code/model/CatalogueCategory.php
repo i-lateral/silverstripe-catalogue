@@ -81,6 +81,21 @@ class CatalogueCategory extends DataObject implements PermissionProvider
     }
 
     /**
+	 * Stub method to get the site config, unless the current class can provide an alternate.
+	 *
+	 * @return SiteConfig
+	 */
+	public function getSiteConfig() {
+
+		if($this->hasMethod('alternateSiteConfig')) {
+			$altConfig = $this->alternateSiteConfig();
+			if($altConfig) return $altConfig;
+		}
+
+		return SiteConfig::current_site_config();
+	}
+
+    /**
      * Return the link for this {@link SimpleProduct} object, with the
      * {@link Director::baseURL()} included.
      *
