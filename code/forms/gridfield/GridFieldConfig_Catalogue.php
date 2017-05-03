@@ -66,6 +66,7 @@ class GridFieldConfig_Catalogue extends GridFieldConfig {
 		$this->addComponent(new GridFieldToolbarHeader());
 		$this->addComponent($sort = new GridFieldSortableHeader());
 		$this->addComponent($filter = new GridFieldFilterHeader());
+		$this->addComponent($manager);
 		$this->addComponent(new GridFieldDataColumns());
 		$this->addComponent(new GridFieldEditButton());
 		$this->addComponent(new GridFieldDeleteAction());
@@ -73,8 +74,7 @@ class GridFieldConfig_Catalogue extends GridFieldConfig {
 		$this->addComponent($pagination = new GridFieldPaginator($itemsPerPage));
 		$this->addComponent(new GridFieldExportButton("buttons-before-right"));
 
-		// If we are manageing a category, use the relevent field, else use
-		// product
+		// If we are manageing a category, use the relevent field, else use product
 		if ($classname == "Category") {
 			$this->addComponent(new CatalogueCategoryDetailForm());
 			$add_button->setItemRequestClass("CatalogueCategoryDetailForm_ItemRequest");
