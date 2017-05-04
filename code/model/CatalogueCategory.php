@@ -50,7 +50,8 @@ class CatalogueCategory extends DataObject implements PermissionProvider
 
     private static $summary_fields = array(
         'Title'         => 'Title',
-        'URLSegment'    => 'URLSegment'
+        'URLSegment'    => 'URLSegment',
+        'Disabled'      => 'Disabled'
     );
 
     private static $casting = array(
