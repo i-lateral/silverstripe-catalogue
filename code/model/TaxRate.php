@@ -2,6 +2,10 @@
 
 namespace ilateral\SilverStripe\Catalogue\Model;
 
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DB;
+use SilverStripe\Forms\RequiredFields;
+
 /**
  * A tax rate can be added to a product and allows you to map a product
  * to a percentage of tax.
@@ -15,21 +19,23 @@ namespace ilateral\SilverStripe\Catalogue\Model;
 class TaxRate extends DataObject
 {
     
+    private static $table_name = 'TaxRate';
+
     /**
      * @config
      */
-    private static $db = array(
+    private static $db = [
         "Title" => "Varchar",
         "Amount"=> "Decimal",
         "Code"  => "Varchar"
-    );
+    ];
     
     public function getCMSValidator()
     {
-        return new RequiredFields(array(
+        return RequiredFields::create([
             "Title",
             "Amount"
-        ));
+        ]);
     }
     
     public function requireDefaultRecords()

@@ -2,6 +2,42 @@
 
 namespace ilateral\SilverStripe\Catalogue\Model;
 
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DB;
+use SilverStripe\Security\PermissionProvider;
+use SilverStripe\Security\Member;
+use SilverStripe\Security\Permission;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
+use SilverStripe\View\SSViewer;
+use SilverStripe\View\ArrayData;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\TextareaField;
+use SilverStripe\Forms\ToggleCompositeField;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\TreeDropdownField;
+use SilverStripe\Forms\Tab;
+use SilverStripe\Forms\TabSet;
+use SilverStripe\Forms\TreeMultiselectField;
+use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
+use SilverStripe\Forms\NumericField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\RequiredFields;
+use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\View\Parsers\URLSegmentFilter;
+use ilateral\SilverStripe\Catalogue\Forms\GridField\GridFieldConfig_Catalogue;
+use ilateral\SilverStripe\Catalogue\Forms\GridField\GridFieldConfig_CatalogueRelated;
+use SilverStripe\Assets\Image;
+use ilateral\SilverStripe\Catalogue\Catalogue;
+use SilverStripe\Core\Convert;
+use TaxRate;
+use CatalogueCategory;
+use Catagory;
+
 /**
  * Base class for all products stored in the database. The intention is
  * to allow Product objects to be extended in the same way as a more
@@ -15,6 +51,8 @@ namespace ilateral\SilverStripe\Catalogue\Model;
  */
 class CatalogueProduct extends DataObject implements PermissionProvider
 {
+    
+    private static $table_name = 'CatalogueProduct';
     
     /**
      * Determines if a product's stock ID will be auto generated if
@@ -33,7 +71,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider
      */
     private static $description = "A standard catalogue product";
     
-    private static $db = array(
+    private static $db = [
         "Title"             => "Varchar(255)",
         "StockID"           => "Varchar",
         "BasePrice"         => "Currency",
@@ -42,27 +80,27 @@ class CatalogueProduct extends DataObject implements PermissionProvider
         "MetaDescription"   => "Text",
         "ExtraMeta"         => "HTMLText",
         "Disabled"          => "Boolean"
-    );
+    ];
     
-    private static $has_one = array(
-        "TaxRate"           => "TaxRate"
-    );
+    private static $has_one = [
+        "TaxRate"           => TaxRate::class
+    ];
 
-    private static $many_many = array(
-        "Images"            => "Image",
-        "RelatedProducts"   => "CatalogueProduct"
-    );
+    private static $many_many = [
+        "Images"            => Image::class,
+        "RelatedProducts"   => CatalogueProduct::class
+    ];
 
-    private static $many_many_extraFields = array(
-        "Images" => array("SortOrder" => "Int"),
-        'RelatedProducts' => array('SortOrder' => 'Int')
-    );
+    private static $many_many_extraFields = [
+        "Images" => ["SortOrder" => "Int"],
+        'RelatedProducts' => ['SortOrder' => 'Int']
+    ];
 
-    private static $belongs_many_many = array(
-        "Categories"    => "CatalogueCategory"
-    );
+    private static $belongs_many_many = [
+        "Categories"    => CatalogueCategory::class
+    ];
 
-    private static $casting = array(
+    private static $casting = [
         "MenuTitle"         => "Varchar",
         "CategoriesList"    => "Varchar",
         "CMSThumbnail"      => "Varchar",
@@ -72,9 +110,9 @@ class CatalogueProduct extends DataObject implements PermissionProvider
         "PriceAndTax"       => "Currency",
         "TaxString"         => "Varchar",
         "IncludeTax"        => "Boolean"
-    );
+    ];
 
-    private static $summary_fields = array(
+    private static $summary_fields = [
         "CMSThumbnail"  => "Thumbnail",
         "ClassName"     => "Product",
         "StockID"       => "StockID",
@@ -83,17 +121,19 @@ class CatalogueProduct extends DataObject implements PermissionProvider
         "TaxRate.Amount"=> "Tax Percent",
         "CategoriesList"=> "Categories",
         "Disabled"      => "Disabled"
-    );
+    ];
 
-    private static $searchable_fields = array(
+    private static $searchable_fields = [
         "Title",
         "URLSegment",
         "Content",
         "StockID",
         "MetaDescription"
-    );
+    ];
 
-    private static $default_sort = '"Title" ASC';
+    private static $default_sort = [
+        "Title" => "ASC"
+    ];
     
     /**
      * Is this object enabled?
@@ -241,8 +281,8 @@ class CatalogueProduct extends DataObject implements PermissionProvider
 	 *
 	 * @return SiteConfig
 	 */
-	public function getSiteConfig() {
-
+    public function getSiteConfig()
+    {
 		if($this->hasMethod('alternateSiteConfig')) {
 			$altConfig = $this->alternateSiteConfig();
 			if($altConfig) return $altConfig;
@@ -344,10 +384,10 @@ class CatalogueProduct extends DataObject implements PermissionProvider
     {
         return $this
             ->RelatedProducts()
-            ->Sort(array(
+            ->Sort([
                 "SortOrder" => "ASC",
                 "Title" => "ASC"
-            ));
+            ]);
     }
 
     /**
@@ -363,7 +403,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider
         } elseif (SiteConfig::current_site_config()->DefaultProductImageID) {
             $default_image = SiteConfig::current_site_config()->DefaultProductImage();
             
-            $images = new ArrayList();
+            $images = ArrayList::create();
             $images->add($default_image);
         } else {
             $no_image = "assets/no-image.png";
@@ -379,9 +419,9 @@ class CatalogueProduct extends DataObject implements PermissionProvider
                 copy($curr_file, $no_image_path);
             }
             
-            $images = new ArrayList();
+            $images = ArrayList::Create();
             
-            $default_image = new Image();
+            $default_image = Image::create();
             $default_image->ID = -1;
             $default_image->Title = "No Image Available";
             $default_image->FileName = $no_image;
@@ -416,8 +456,8 @@ class CatalogueProduct extends DataObject implements PermissionProvider
 
         $template = new SSViewer('BreadcrumbsTemplate');
 
-        return $template->process($this->customise(new ArrayData(array(
-            'Pages' => new ArrayList(array_reverse($items))
+        return $template->process($this->customise(ArrayData::create(array(
+            'Pages' => ArrayList::create(array_reverse($items))
         ))));
     }
 
@@ -453,21 +493,21 @@ class CatalogueProduct extends DataObject implements PermissionProvider
 
         // If CMS Installed, use URLSegmentField, otherwise use text
         // field for URL
-        if (class_exists('SiteTreeURLSegmentField')) {
+        if (class_exists('\SilverStripe\CMS\Forms\SiteTreeURLSegmentField')) {
             $baseLink = Controller::join_links(
                 Director::absoluteBaseURL()
             );
                         
-            $url_field = SiteTreeURLSegmentField::create("URLSegment");
+            $url_field = \SilverStripe\CMS\Forms\SiteTreeURLSegmentField::create("URLSegment");
             $url_field->setURLPrefix($baseLink);
         } else {
             $url_field = TextField::create("URLSegment");
         }
 
-        $fields = new FieldList(
-            $rootTab = new TabSet("Root",
+        $fields = FieldList::create(
+            $rootTab = TabSet::create("Root",
                 // Main Tab Fields
-                $tabMain = new Tab('Main',
+                $tabMain = Tab::create('Main',
                     TextField::create("Title", $this->fieldLabel('Title')),
                     $url_field,
                     HTMLEditorField::create('Content', $this->fieldLabel('Content'))
@@ -480,7 +520,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider
                         )
                     )->setHeadingLevel(4)
                 ),
-                $tabSettings = new Tab('Settings',
+                $tabSettings = Tab::create('Settings',
                     NumericField::create("BasePrice", _t("Catalogue.Price", "Price")),
                     TextField::create("StockID", $this->fieldLabel('StockID'))
                         ->setRightTitle(_t("Catalogue.StockIDHelp", "For example, a product SKU")),
@@ -520,7 +560,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider
         if ($this->ID) {
             $fields->addFieldToTab(
                 'Root.Images',
-                SortableUploadField::create(
+                UploadField::create(
                     'Images',
                     $this->fieldLabel('Images'),
                     $this->Images()
@@ -551,7 +591,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider
             $required[] = "StockID";
         }
         
-        return new RequiredFields($required);
+        return RequiredFields::create($required);
     }
 
     /**
@@ -566,12 +606,12 @@ class CatalogueProduct extends DataObject implements PermissionProvider
     public function validURLSegment()
     {
         $objects_to_check = array(
-            "CatalogueProduct",
-            "CatalogueCategory"
+            CatalogueProduct::class,
+            CatalogueCategory::class
         );
         
-        if (class_exists("SiteTree")) {
-            $objects_to_check[] = "SiteTree";
+        if (class_exists("\SilverStripe\CMS\Model\SiteTree")) {
+            $objects_to_check[] = "\SilverStripe\CMS\Model\SiteTree";
         }
 
         $segment = Convert::raw2sql($this->URLSegment);
@@ -674,26 +714,26 @@ class CatalogueProduct extends DataObject implements PermissionProvider
     
     public function providePermissions()
     {
-        return array(
-            "CATALOGUE_ADD_PRODUCTS" => array(
+        return [
+            "CATALOGUE_ADD_PRODUCTS" => [
                 'name' => 'Add products',
                 'help' => 'Allow user to add products to catalogue',
                 'category' => 'Catalogue',
                 'sort' => 50
-            ),
-            "CATALOGUE_EDIT_PRODUCTS" => array(
+            ],
+            "CATALOGUE_EDIT_PRODUCTS" => [
                 'name' => 'Edit products',
                 'help' => 'Allow user to edit any product in catalogue',
                 'category' => 'Catalogue',
                 'sort' => 100
-            ),
-            "CATALOGUE_DELETE_PRODUCTS" => array(
+            ],
+            "CATALOGUE_DELETE_PRODUCTS" => [
                 'name' => 'Delete products',
                 'help' => 'Allow user to delete any product in catalogue',
                 'category' => 'Catalogue',
                 'sort' => 150
-            )
-        );
+            ]
+        ];
     }
 
     public function canView($member = false)

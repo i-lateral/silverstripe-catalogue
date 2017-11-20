@@ -3,7 +3,8 @@
 namespace ilateral\SilverStripe\Catalogue\Admin;
 
 use SilverStripe\Admin\ModelAdmin;
-use ilateral\SilverStripe\Catalogue\GridFieldConfig_Catalogue;
+use ilateral\SilverStripe\Catalogue\Forms\GridField\GridFieldConfig_Catalogue;
+use ilateral\SilverStripe\Catalogue\Import\ProductCSVBulkLoader;
 use \Product;
 use \Category;
 
@@ -37,16 +38,18 @@ class CatalogueAdmin extends ModelAdmin
 
     private static $menu_priority = 11;
 
-    private static $managed_models = array(
+    private static $managed_models = [
         Product::class,
         Category::class
-    );
+    ];
 
-    private static $model_importers = array(
-        'Product' => 'CatalogueProductCSVBulkLoader',
-    );
+    private static $model_importers = [
+        Product::class => ProductCSVBulkLoader::class,
+    ];
 
-    public $showImportForm = array('Product');
+    public $showImportForm = [
+        Product::class
+    ];
 
     public function init()
     {
@@ -55,10 +58,10 @@ class CatalogueAdmin extends ModelAdmin
     
     public function getExportFields()
     {
-        $fields = array(
+        $fields = [
             "Title" => "Title",
             "URLSegment" => "URLSegment"
-        );
+        ];
         
         if ($this->modelClass == 'Product') {
             $fields["StockID"] = "StockID";
@@ -80,7 +83,7 @@ class CatalogueAdmin extends ModelAdmin
         $list = parent::getList();
         
         // Filter categories
-        if ($this->modelClass == 'Category') {
+        if ($this->modelClass == Category::class) {
             $list = $list->filter('ParentID', 0);
         }
         
@@ -93,19 +96,19 @@ class CatalogueAdmin extends ModelAdmin
     {
         $form = parent::getEditForm($id, $fields);
         $fields = $form->Fields();
-        $params = $this->request->requestVar('q');
-        $gridField = $form->Fields()->fieldByName($this->modelClass);
+        $grid = $fields
+            ->fieldByName($this->sanitiseClassName($this->modelClass));
 
-        if ($this->modelClass == 'Product') {
-            $gridField->setConfig(new GridFieldConfig_Catalogue(
+        if ($this->modelClass == Product::class && $grid) {
+            $grid->setConfig(GridFieldConfig_Catalogue::create(
                 $this->modelClass,
                 $this->config()->product_page_length
             ));
         }
         
         // Alterations for Hiarachy on product cataloge
-        if ($this->modelClass == 'Category') {
-            $gridField->setConfig(new GridFieldConfig_Catalogue(
+        if ($this->modelClass == Category::class && $grid) {
+            $grid->setConfig(GridFieldConfig_Catalogue::create(
                 $this->modelClass,
                 $this->config()->category_page_length,
                 "Sort"

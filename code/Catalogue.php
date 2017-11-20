@@ -2,6 +2,10 @@
 
 namespace ilateral\SilverStripe\Catalogue;
 
+use SilverStripe\View\ViewableData;
+use ilateral\SilverStripe\Catalogue\Model\CatalogueCategory;
+use ilateral\SilverStripe\Catalogue\Model\CatalogueProduct;
+
 /**
  * Object designed to allow injection of catalogue global settings into
  * templates without having to flood the base controller with methods   

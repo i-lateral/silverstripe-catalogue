@@ -2,6 +2,31 @@
 
 namespace ilateral\SilverStripe\Catalogue\Model;
 
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\Hierarchy\Hierarchy;
+use SilverStripe\Security\PermissionProvider;
+use SilverStripe\Security\Member;
+use SilverStripe\Security\Permission;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
+use SilverStripe\View\SSViewer;
+use SilverStripe\View\ArrayData;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\TextareaField;
+use SilverStripe\Forms\ToggleCompositeField;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\TreeDropdownField;
+use SilverStripe\View\Parsers\URLSegmentFilter;
+use ilateral\SilverStripe\Catalogue\Forms\GridField\GridFieldConfig_Catalogue;
+use ilateral\SilverStripe\Catalogue\Forms\GridField\GridFieldConfig_CatalogueRelated;
+use ilateral\SilverStripe\Catalogue\Catalogue;
+use CatalogueProduct;
+use Catagory;
+
 /**
  * Base class for all product categories stored in the database. The
  * intention is to allow category objects to be extended in the same way
@@ -16,6 +41,8 @@ namespace ilateral\SilverStripe\Catalogue\Model;
 class CatalogueCategory extends DataObject implements PermissionProvider
 {
     
+    private static $table_name = 'CatalogueCategory';
+
     /**
      * Description for this object that will get loaded by the website
      * when it comes to creating it for the first time.
@@ -25,43 +52,45 @@ class CatalogueCategory extends DataObject implements PermissionProvider
      */
     private static $description = "A basic product category";
     
-    private static $db = array(
+    private static $db = [
         "Title"             => "Varchar",
         "URLSegment"        => "Varchar",
         "Sort"              => "Int",
         "MetaDescription"   => "Text",
         "ExtraMeta"         => "HTMLText",
         "Disabled"          => "Boolean"
-    );
+    ];
 
-    private static $has_one = array(
-        'Parent'        => 'CatalogueCategory'
-    );
+    private static $has_one = [
+        'Parent'        => CatalogueCategory::class
+    ];
 
-    private static $many_many = array(
-        'Products'      => 'CatalogueProduct'
-    );
+    private static $many_many = [
+        'Products'      => CatalogueProduct::class
+    ];
 
-    private static $many_many_extraFields = array(
-        'Products' => array('SortOrder' => 'Int')
-    );
+    private static $many_many_extraFields = [
+        'Products' => ['SortOrder' => 'Int']
+    ];
 
-    private static $extensions = array(
-        "Hierarchy"
-    );
+    private static $extensions = [
+        Hierarchy::class
+    ];
 
-    private static $summary_fields = array(
+    private static $summary_fields = [
         'Title'         => 'Title',
         'URLSegment'    => 'URLSegment',
         'Disabled'      => 'Disabled'
-    );
+    ];
 
-    private static $casting = array(
+    private static $casting = [
         "MenuTitle"     => "Varchar",
         "AllProducts"   => "ArrayList"
-    );
+    ];
 
-    private static $default_sort = '"Sort" ASC';
+    private static $default_sort = [
+        "Sort" => "ASC"
+    ];
 
     /**
      * Is this object enabled?
@@ -88,7 +117,7 @@ class CatalogueCategory extends DataObject implements PermissionProvider
 	 *
 	 * @return SiteConfig
 	 */
-	public function getSiteConfig() {
+	public function getSiteConfig(){
 
 		if($this->hasMethod('alternateSiteConfig')) {
 			$altConfig = $this->alternateSiteConfig();
@@ -220,9 +249,11 @@ class CatalogueCategory extends DataObject implements PermissionProvider
     {
         $template = new SSViewer('BreadcrumbsTemplate');
 
-        return $template->process($this->customise(new ArrayData(array(
-            'Pages' => new ArrayList(array_reverse($this->parentStack()))
-        ))));
+        return $template->process(
+            $this->customise(ArrayData::create([
+                'Pages' => ArrayList::create(array_reverse($this->parentStack()))
+            ]))
+        );
     }
 
     /**
@@ -322,12 +353,12 @@ class CatalogueCategory extends DataObject implements PermissionProvider
         
         // If CMS Installed, use URLSegmentField, otherwise use text
         // field for URL
-        if (class_exists('SiteTreeURLSegmentField')) {
+        if (class_exists("\SilverStripe\CMS\Forms\SiteTreeURLSegmentField")) {
             $baseLink = Controller::join_links(
                 Director::absoluteBaseURL()
             );
                         
-            $url_field = SiteTreeURLSegmentField::create("URLSegment");
+            $url_field = \SilverStripe\CMS\Forms\SiteTreeURLSegmentField::create("URLSegment");
             $url_field->setURLPrefix($baseLink);
         } else {
             $url_field = TextField::create("URLSegment");
@@ -381,7 +412,12 @@ class CatalogueCategory extends DataObject implements PermissionProvider
 
             // Ensure that we set the parent ID to the current category
             // when creating a new record 
-            $child_config = GridFieldConfig_Catalogue::create("Category", null, "Sort");
+            $child_config = GridFieldConfig_Catalogue::create(
+                Category::class,
+                null,
+                "Sort"
+            );
+
             $child_edit = $child_config->getComponentByType('GridFieldDetailForm');
 
             $self = $this; // PHP 5.3 support - $this can't be used in closures
@@ -399,7 +435,8 @@ class CatalogueCategory extends DataObject implements PermissionProvider
                 GridField::create(
                     "Children",
                     "",
-                    Category::get()->filter("ParentID", $this->ID),
+                    Category::get()
+                        ->filter("ParentID", $this->ID),
                     $child_config
                 )
             );
@@ -459,7 +496,12 @@ class CatalogueCategory extends DataObject implements PermissionProvider
             // Ensure that this object has a non-conflicting URLSegment value.
             $existing_cats = CatalogueCategory::get()->filter('URLSegment', $t)->count();
             $existing_products = CatalogueProduct::get()->filter('URLSegment', $t)->count();
-            $existing_pages = (class_exists('SiteTree')) ? SiteTree::get()->filter('URLSegment', $t)->count() : 0;
+            
+            if (class_exists('\SilverStripe\CMS\Model\SiteTree')) {
+                $existing_pages = \SilverStripe\CMS\Model\SiteTree::get()->filter('URLSegment', $t)->count();
+            } else {
+                $existing_pages = 0;
+            }
 
             $count = (int)$existing_cats + (int)$existing_products + (int)$existing_pages;
 
@@ -491,26 +533,26 @@ class CatalogueCategory extends DataObject implements PermissionProvider
     
     public function providePermissions()
     {
-        return array(
-            "CATALOGUE_ADD_CATEGORIES" => array(
+        return [
+            "CATALOGUE_ADD_CATEGORIES" => [
                 'name' => 'Add categories',
                 'help' => 'Allow user to add categories to catalogue',
                 'category' => 'Catalogue',
                 'sort' => 50
-            ),
-            "CATALOGUE_EDIT_CATEGORIES" => array(
+            ],
+            "CATALOGUE_EDIT_CATEGORIES" => [
                 'name' => 'Edit categories',
                 'help' => 'Allow user to edit any categories in catalogue',
                 'category' => 'Catalogue',
                 'sort' => 100
-            ),
-            "CATALOGUE_DELETE_CATEGORIES" => array(
+            ],
+            "CATALOGUE_DELETE_CATEGORIES" => [
                 'name' => 'Delete categories',
                 'help' => 'Allow user to delete any categories in catalogue',
                 'category' => 'Catalogue',
                 'sort' => 150
-            )
-        );
+            ]
+        ];
     }
 
     public function canView($member = false)
