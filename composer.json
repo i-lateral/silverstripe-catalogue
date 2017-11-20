@@ -15,18 +15,24 @@
         "issues": "http://github.com/i-lateral/silverstripe-catalogue/issues"
     },
     "require": {
-        "silverstripe/framework": ">=3.1",
-        "symbiote/silverstripe-gridfieldextensions": "~2.0",
-        "colymba/gridfield-bulk-editing-tools": "~2.1",
-        "bummzack/sortablefile": "*"
+        "silverstripe/framework": "~4.0",
+        "silverstripe/siteconfig": "~4.0",
+        "colymba/gridfield-bulk-editing-tools": "dev-master",
+        "symbiote/silverstripe-gridfieldextensions": "~3.0"
+    },
+    "extra": {
+        "expose": [
+            "client/dist"
+        ]
+    },
+    "autoload": {
+        "psr-4": {
+            "ilateral\\SilverStripe\\Catalogue\\": "src/"
+        }
     },
     "suggest": {
         "silverstripe/cms": "Add full content management support to your site",
-        "i-lateral/silverstripe-siteconfig": "Add site settings support",
         "i-lateral/silverstripe-middleman": "Add CMS vars, such as menu, searchform, etc to your site",
         "i-lateral/silverstripe-users": "Add user account management, login and registration"
-    },
-    "extra": {
-        "installer-name": "catalogue"
     }
 }
