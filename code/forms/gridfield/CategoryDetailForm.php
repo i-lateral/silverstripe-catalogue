@@ -1,10 +1,12 @@
 <?php
 
-class CatalogueCategoryDetailForm extends CatalogueEnableDisableDetailForm
+namespace ilateral\SilverStripe\Catalogue\Forms\GridField;
+
+class CategoryDetailForm extends EnableDisableDetailForm
 {
 }
 
-class CatalogueCategoryDetailForm_ItemRequest extends CatalogueEnableDisableDetailForm_ItemRequest
+class CategoryDetailForm_ItemRequest extends EnableDisableDetailForm_ItemRequest
 {
     private static $allowed_actions = array(
         'edit',

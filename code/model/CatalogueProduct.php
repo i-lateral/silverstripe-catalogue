@@ -1,5 +1,7 @@
 <?php
 
+namespace ilateral\SilverStripe\Catalogue\Model;
+
 /**
  * Base class for all products stored in the database. The intention is
  * to allow Product objects to be extended in the same way as a more

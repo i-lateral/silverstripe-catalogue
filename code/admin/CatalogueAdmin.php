@@ -1,5 +1,12 @@
 <?php
 
+namespace ilateral\SilverStripe\Catalogue\Admin;
+
+use SilverStripe\Admin\ModelAdmin;
+use ilateral\SilverStripe\Catalogue\GridFieldConfig_Catalogue;
+use \Product;
+use \Category;
+
 /**
  * CatalogueAdmin creates an admin area that allows editing of products
  * and Product Categories
@@ -31,8 +38,8 @@ class CatalogueAdmin extends ModelAdmin
     private static $menu_priority = 11;
 
     private static $managed_models = array(
-        'Product' => array('title' => 'Products'),
-        'Category' => array('title' => 'Categories')
+        Product::class,
+        Category::class
     );
 
     private static $model_importers = array(
@@ -103,17 +110,6 @@ class CatalogueAdmin extends ModelAdmin
                 $this->config()->category_page_length,
                 "Sort"
             ));
-        }
-
-        // Update list of items for subsite (if used)
-        if (class_exists('Subsite')) {
-            $list = $gridField
-                ->getList()
-                ->filter(array(
-                    'SubsiteID' => Subsite::currentSubsiteID()
-                ));
-
-            $gridField->setList($list);
         }
 
         $this->extend("updateEditForm", $form);

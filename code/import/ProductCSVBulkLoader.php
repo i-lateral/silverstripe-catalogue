@@ -1,12 +1,14 @@
 <?php
 
+namespace ilateral\SilverStripe\Catalogue\Import;
+
 /**
  * Allow slightly more complex product imports from a CSV file
  *
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class CatalogueProductCSVBulkLoader extends CsvBulkLoader
+class ProductCSVBulkLoader extends CsvBulkLoader
 {
     
     public $columnMap = array(

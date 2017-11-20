@@ -1,12 +1,15 @@
 <?php
 
+namespace ilateral\SilverStripe\Catalogue\Forms\GridField;
+
+
 /**
  * A {@link GridFieldBulkActionHandler} for bulk marking products
  *
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class CatalogueProductBulkAction extends GridFieldBulkActionHandler
+class ProductBulkAction extends GridFieldBulkActionHandler
 {
 
     private static $allowed_actions = array(

@@ -1,5 +1,7 @@
 <?php
 
+namespace ilateral\SilverStripe\Catalogue\Control;
+
 /**
  * Controller used to render pages in the catalogue (either categories
  * or pages)

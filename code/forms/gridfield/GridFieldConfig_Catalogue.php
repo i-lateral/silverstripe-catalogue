@@ -1,5 +1,7 @@
 <?php
 
+namespace ilateral\SilverStripe\Catalogue\Forms\GridField;
+
 /**
  * Allows editing of records contained within the GridField, instead of only allowing the ability to view records in
  * the GridField.

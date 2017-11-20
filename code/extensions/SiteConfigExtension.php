@@ -1,11 +1,14 @@
 <?php
+
+namespace ilateral\SilverStripe\Catalogue\Extensions;
+
 /**
  * Provides additional settings required globally for this module
  *
  * @author i-lateral (http://www.i-lateral.com)
  * @package product-catalogue
  */
-class CatalogueSiteConfigExtension extends DataExtension
+class SiteConfigExtension extends DataExtension
 {
     
     private static $has_one = array(

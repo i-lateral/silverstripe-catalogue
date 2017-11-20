@@ -1,5 +1,7 @@
 <?php
 
+namespace ilateral\SilverStripe\Catalogue\Control;
+
 /**
  * Top level controller that all catalogue controllers should extend.
  * There are some methods that have to be taken from ContentController

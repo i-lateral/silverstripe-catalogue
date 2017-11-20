@@ -1,5 +1,7 @@
 <?php
 
+namespace ilateral\SilverStripe\Catalogue\Control;
+
 /**
  * URLController determins what part of Silverstripe (framework, 
  * Catalogue or CMS) will handle the current URL.

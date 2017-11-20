@@ -1,5 +1,7 @@
 <?php
 
+namespace ilateral\SilverStripe\Catalogue;
+
 /**
  * Object designed to allow injection of catalogue global settings into
  * templates without having to flood the base controller with methods   

@@ -1,5 +1,7 @@
 <?php
 
+namespace ilateral\SilverStripe\Catalogue\Helpers;
+
 /**
  * Simple helper class to provide common functions across
  * all libraries
@@ -7,7 +9,7 @@
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class CatalogueHelper extends Object
+class Helper extends Object
 {
     /**
      * Template names to be removed from the default template list 

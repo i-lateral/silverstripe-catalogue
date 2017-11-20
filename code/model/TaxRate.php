@@ -1,5 +1,7 @@
 <?php
 
+namespace ilateral\SilverStripe\Catalogue\Model;
+
 /**
  * A tax rate can be added to a product and allows you to map a product
  * to a percentage of tax.

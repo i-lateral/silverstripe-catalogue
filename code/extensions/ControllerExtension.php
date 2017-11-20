@@ -1,5 +1,7 @@
 <?php
 
+namespace ilateral\SilverStripe\Catalogue\Extensions;
+
 /**
  * Extension for Controller that provide additional methods to all
  * templates 
@@ -7,7 +9,7 @@
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class CatalogueControllerExtension extends Extension
+class ControllerExtension extends Extension
 {
     
     /**

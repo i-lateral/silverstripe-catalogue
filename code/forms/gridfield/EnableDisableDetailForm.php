@@ -1,4 +1,7 @@
 <?php
+
+namespace ilateral\SilverStripe\Catalogue\Forms\GridField;
+
 /**
  * Base class for editing a catlogue object.
  * 
@@ -11,11 +14,11 @@
  * @author ilateral
  */
 
-class CatalogueEnableDisableDetailForm extends GridFieldDetailForm
+class EnableDisableDetailForm extends GridFieldDetailForm
 {
 }
 
-class CatalogueEnableDisableDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequest
+class EnableDisableDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequest
 {
 
     private static $allowed_actions = array(
