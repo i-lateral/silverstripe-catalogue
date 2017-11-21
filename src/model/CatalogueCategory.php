@@ -24,7 +24,6 @@ use SilverStripe\View\Parsers\URLSegmentFilter;
 use ilateral\SilverStripe\Catalogue\Forms\GridField\GridFieldConfig_Catalogue;
 use ilateral\SilverStripe\Catalogue\Forms\GridField\GridFieldConfig_CatalogueRelated;
 use ilateral\SilverStripe\Catalogue\Catalogue;
-use CatalogueProduct;
 use Catagory;
 
 /**
