@@ -1,0 +1,18 @@
+---
+Name: cataloguegooglesitemaps
+---
+Wilr\GoogleSitemaps\GoogleSitemap:
+  enabled: true
+  objects_per_sitemap: 2000
+  google_notification_enabled: false
+  use_show_in_search: true
+---
+Only:
+  classexists: Wilr\GoogleSitemaps\Extensions\GoogleSitemapSiteTreeExtension
+---
+\ilateral\SilverStripe\Catalogue\Model\CatalogueProduct:
+  extensions:
+    - Wilr\GoogleSitemaps\Extensions\GoogleSitemapSiteTreeExtension
+\ilateral\SilverStripe\Catalogue\Model\CatalogueCategory:
+  extensions:
+    - Wilr\GoogleSitemaps\Extensions\GoogleSitemapSiteTreeExtension

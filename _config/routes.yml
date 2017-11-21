@@ -1,5 +1,5 @@
 ---
-Name: modelascontrollerroutes
+Name: catalogueroutes
 After: cms/routes#modelascontrollerroutes
 ---
 Director:
