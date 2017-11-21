@@ -2,6 +2,7 @@
 
 namespace ilateral\SilverStripe\Catalogue\Extensions;
 
+use SilverStripe\ORM\DataExtension;
 
 /**
  * Extension for Image that allows mapping of products to multiple
@@ -13,6 +14,6 @@ namespace ilateral\SilverStripe\Catalogue\Extensions;
 class ImageExtension extends DataExtension
 {
     private static $belongs_many_many = array(
-        'Products'      => 'Product'
+        'Products'      => Product::class
     );
 }

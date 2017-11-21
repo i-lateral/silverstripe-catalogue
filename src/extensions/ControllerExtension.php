@@ -2,6 +2,9 @@
 
 namespace ilateral\SilverStripe\Catalogue\Extensions;
 
+use SilverStripe\Core\Extension;
+use ilateral\SilverStripe\Catalogue\Catalogue;
+
 /**
  * Extension for Controller that provide additional methods to all
  * templates 
@@ -42,13 +45,6 @@ class ControllerExtension extends Extension
             
             if (!class_exists("Product_Controller")) {
                 copy(BASE_PATH . "/catalogue/scaffold/Product_Controller", BASE_PATH . "/{$project}/code/control/Product_Controller.php");
-            }
-        }
-        
-        if ($controller != "DevelopmentAdmin") {
-            if (class_exists('Subsite') && Subsite::currentSubsite()) {
-                // Set the location
-                i18n::set_locale(Subsite::currentSubsite()->Language);
             }
         }
     }

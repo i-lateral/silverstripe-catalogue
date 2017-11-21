@@ -2,6 +2,10 @@
 
 namespace ilateral\SilverStripe\Catalogue\Import;
 
+use SilverStripe\Dev\CsvBulkLoader;
+use ilateral\SilverStripe\Catalogue\Model\CatalogueProduct;
+use Product;
+
 /**
  * Allow slightly more complex product imports from a CSV file
  *
@@ -11,27 +15,27 @@ namespace ilateral\SilverStripe\Catalogue\Import;
 class ProductCSVBulkLoader extends CsvBulkLoader
 {
     
-    public $columnMap = array(
+    public $columnMap = [
         "Product"   => "ClassName",
         "ClassName" => "ClassName",
         "SKU"       => "StockID",
         "Name"      => "Title",
         "Price"     => "BasePrice",
         "TaxPercent"=> '->importTaxPercent'
-    );
+    ];
 
-    public $duplicateChecks = array(
+    public $duplicateChecks = [
         'ID'        => 'ID',
         'SKU'       => 'StockID',
         'StockID'   => 'StockID'
-    );
+    ];
 
     public function __construct($objectClass = null)
     {
-        if (class_exists("Product")) {
-            if (!$objectClass || $objectClass == "CatalogueProduct") {
-                $objectClass = 'Product';
-                $this->objectClass = 'Product';
+        if (class_exists(Product::class)) {
+            if (!$objectClass || $objectClass == CatalogueProduct::class) {
+                $objectClass = Product::class;
+                $this->objectClass = Product::class;
             }
         }
 

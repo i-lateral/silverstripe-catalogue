@@ -2,6 +2,8 @@
 
 namespace ilateral\SilverStripe\Catalogue\Helpers;
 
+use SilverStripe\View\ViewableData;
+
 /**
  * Simple helper class to provide common functions across
  * all libraries
@@ -9,7 +11,7 @@ namespace ilateral\SilverStripe\Catalogue\Helpers;
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class Helper extends Object
+class Helper extends ViewableData
 {
     /**
      * Template names to be removed from the default template list 
