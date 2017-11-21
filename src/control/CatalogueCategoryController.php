@@ -2,6 +2,9 @@
 
 namespace ilateral\SilverStripe\Catalogue\Control;
 
+use SilverStripe\ORM\PaginatedList;
+use ilateral\SilverStripe\Catalogue\Helpers\Helper as CatalogueHelper;
+use ilateral\SilverStripe\Catalogue\Model\CatalogueCategory;
 
 /**
  * Controller used to render pages in the catalogue (either categories or pages)
@@ -107,6 +110,6 @@ class CatalogueCategoryController extends CatalogueController
             }
         }
 
-        return new ArrayList($visible);
+        return ArrayList::create($visible);
     }
 }

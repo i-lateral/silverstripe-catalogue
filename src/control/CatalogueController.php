@@ -2,6 +2,14 @@
 
 namespace ilateral\SilverStripe\Catalogue\Control;
 
+use SilverStripe\Control\Controller;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Core\Convert;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Security\Permission;
+use SilverStripe\ORM\PaginatedList;
+use Product;
+
 /**
  * Top level controller that all catalogue controllers should extend.
  * There are some methods that have to be taken from ContentController

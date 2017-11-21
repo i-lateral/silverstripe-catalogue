@@ -2,6 +2,12 @@
 
 namespace ilateral\SilverStripe\Catalogue\Control;
 
+use ilateral\SilverStripe\Catalogue\Model\CatalogueProduct;
+use ilateral\SilverStripe\Catalogue\Helpers\Helper as CatalogueHelper;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\RequiredFields;
+
 /**
  * Controller used to render pages in the catalogue (either categories
  * or pages)
@@ -11,10 +17,10 @@ namespace ilateral\SilverStripe\Catalogue\Control;
  */
 class CatalogueProductController extends CatalogueController
 {
-    private static $allowed_actions = array(
+    private static $allowed_actions = [
         'iid',
         'Form'
-    );
+    ];
 
     /**
      * Return the link to this controller, but force the expanded link to be returned so that form methods and
@@ -118,7 +124,7 @@ class CatalogueProductController extends CatalogueController
             "Form",
             FieldList::create(),
             FieldList::create(),
-            new RequiredFields(array())
+            RequiredFields::create([])
         );
         
         $this->extend("updateForm", $form);

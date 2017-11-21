@@ -2,6 +2,18 @@
 
 namespace ilateral\SilverStripe\Catalogue\Control;
 
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\ORM\DB;
+use ilateral\SilverStripe\Catalogue\Catalogue;
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Control\HTTPRequest;
+use ilateral\SilverStripe\Catalogue\Model\CatalogueProduct;
+use ilateral\SilverStripe\Catalogue\Model\CatalogueCategory;
+
+
 /**
  * URLController determins what part of Silverstripe (framework, 
  * Catalogue or CMS) will handle the current URL.
@@ -28,10 +40,10 @@ class CatalogueURLController extends Controller
      */
     protected static function controller_for($object, $action = null)
     {
-        if ($object->class == 'CatalogueProduct') {
-            $controller = "CatalogueProductController";
-        } elseif ($object->class == 'CatalogueCategory') {
-            $controller = "CatalogueCategoryController";
+        if ($object->class == CatalogueProduct::class) {
+            $controller = CatalogueProductController::class;
+        } elseif ($object->class == CatalogueCategory::class) {
+            $controller = CatalogueCategoryController::class;
         } else {
             $ancestry = ClassInfo::ancestry($object->class);
             
@@ -44,10 +56,10 @@ class CatalogueURLController extends Controller
             // Find the controller we need, or revert to a default
             if ($class !== null) {
                 $controller = "{$class}_Controller";
-            } elseif (ClassInfo::baseDataClass($object->class) == "CatalogueProduct") {
-                $controller = "CatalogueProductController";
-            } elseif (ClassInfo::baseDataClass($object->class) == "CatalogueCategory") {
-                $controller = "CatalogueCategoryController";
+            } elseif (ClassInfo::baseDataClass($object->class) == CatalogueProduct::class) {
+                $controller = CatalogueProductController::class;
+            } elseif (ClassInfo::baseDataClass($object->class) == CatalogueCategory::class) {
+                $controller = CatalogueCategoryController::class;
             }
         }
 
@@ -62,10 +74,9 @@ class CatalogueURLController extends Controller
      * Check catalogue URL's before we get to the CMS (if it exists)
      * 
      * @param SS_HTTPRequest $request
-     * @param DataModel|null $model
      * @return SS_HTTPResponse
      */
-    public function handleRequest(SS_HTTPRequest $request, DataModel $model)
+    public function handleRequest(HTTPRequest $request)
     {
         $this->request = $request;
 		$this->setDataModel($model);
@@ -74,7 +85,7 @@ class CatalogueURLController extends Controller
 		$this->pushCurrent();
 
         // Create a response just in case init() decides to redirect
-        $this->response = new SS_HTTPResponse();
+        $this->response = new HTTPResponse();
 
         $this->init();
         
@@ -85,7 +96,7 @@ class CatalogueURLController extends Controller
         }
         
         // If DB is not present, build
-        if (!DB::isActive() || !ClassInfo::hasTable('CatalogueProduct') || !ClassInfo::hasTable('CatalogueCategory')) {
+        if (!DB::isActive() || !ClassInfo::hasTable(CatalogueProduct::class) || !ClassInfo::hasTable(CatalogueCategory::class)) {
             return $this->response->redirect(Director::absoluteBaseURL() . 'dev/build?returnURL=' . (isset($_GET['url']) ? urlencode($_GET['url']) : null));
         }
         
@@ -96,11 +107,6 @@ class CatalogueURLController extends Controller
         $this->init();
 
         $this->extend('onAfterInit');
-
-        // Find link, regardless of current locale settings
-        if (class_exists('Translatable')) {
-            Translatable::disable_locale_filter();
-        }
         
         $filter = array(
             'URLSegment' => $urlsegment,
@@ -111,19 +117,16 @@ class CatalogueURLController extends Controller
             $controller = $this->controller_for($object);
         } elseif($catalogue_enabled && $object = CatalogueCategory::get()->filter($filter)->first()) {
             $controller = $this->controller_for($object);
-        } elseif (class_exists('ModelAsController')) { // If CMS installed
-            $controller = ModelAsController::create();
+        } elseif (class_exists("\SilverStripe\CMS\Controllers\ModelAsController")) { // If CMS installed
+            $controller = \SilverStripe\CMS\Controllers\ModelAsController::create();
         } else {
             $controller = Controller::create();
-        }
-        
-        if (class_exists('Translatable')) {
-            Translatable::enable_locale_filter();
         }
         
         $result = $controller->handleRequest($request, $model);
 
         $this->popCurrent();
+
         return $result;
     }
 }
