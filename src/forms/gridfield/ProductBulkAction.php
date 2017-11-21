@@ -2,6 +2,10 @@
 
 namespace ilateral\SilverStripe\Catalogue\Forms\GridField;
 
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\Convert;
+use Colymba\BulkManager\BulkAction\Handler as GridFieldBulkActionHandler;
 
 /**
  * A {@link GridFieldBulkActionHandler} for bulk marking products
@@ -22,7 +26,7 @@ class ProductBulkAction extends GridFieldBulkActionHandler
         "enable" => "enable"
     );
 
-    public function disable(SS_HTTPRequest $request)
+    public function disable(HTTPRequest $request)
     {
         $ids = array();
 
@@ -33,7 +37,7 @@ class ProductBulkAction extends GridFieldBulkActionHandler
             $record->write();
         }
 
-        $response = new SS_HTTPResponse(Convert::raw2json(array(
+        $response = new HTTPResponse(Convert::raw2json(array(
             'done' => true,
             'records' => $ids
         )));
@@ -43,7 +47,7 @@ class ProductBulkAction extends GridFieldBulkActionHandler
         return $response;
     }
 
-    public function enable(SS_HTTPRequest $request)
+    public function enable(HTTPRequest $request)
     {
         $ids = array();
 
@@ -54,7 +58,7 @@ class ProductBulkAction extends GridFieldBulkActionHandler
             $record->write();
         }
 
-        $response = new SS_HTTPResponse(Convert::raw2json(array(
+        $response = new HTTPResponse(Convert::raw2json(array(
             'done' => true,
             'records' => $ids
         )));

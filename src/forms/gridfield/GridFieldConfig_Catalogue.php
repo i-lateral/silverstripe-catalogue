@@ -2,6 +2,23 @@
 
 namespace ilateral\SilverStripe\Catalogue\Forms\GridField;
 
+use SilverStripe\Forms\GridField\GridFieldConfig;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\GridField\GridFieldButtonRow;
+use SilverStripe\Forms\GridField\GridFieldToolbarHeader;
+use SilverStripe\Forms\GridField\GridFieldSortableHeader;
+use SilverStripe\Forms\GridField\GridFieldFilterHeader;
+use SilverStripe\Forms\GridField\GridFieldDataColumns;
+use SilverStripe\Forms\GridField\GridFieldEditButton;
+use SilverStripe\Forms\GridField\GridFieldDeleteAction;
+use SilverStripe\Forms\GridField\GridFieldPageCount;
+use SilverStripe\Forms\GridField\GridFieldPaginator;
+use SilverStripe\Forms\GridField\GridFieldExportButton;
+use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+use Colymba\BulkManager\BulkManager as GridFieldBulkManager;
+use Symbiote\GridFieldExtensions\GridFieldAddNewMultiClass;
+
 /**
  * Allows editing of records contained within the GridField, instead of only allowing the ability to view records in
  * the GridField.
@@ -21,7 +38,7 @@ class GridFieldConfig_Catalogue extends GridFieldConfig {
     protected function get_subclasses($classname) {
         // Get a list of available product classes
         $classnames = ClassInfo::subclassesFor($classname);
-        $return = array();
+        $return = [];
 
         foreach ($classnames as $classname) {
             $instance = singleton($classname);
@@ -57,7 +74,7 @@ class GridFieldConfig_Catalogue extends GridFieldConfig {
 		$this->addComponent(new GridFieldExportButton("buttons-before-right"));
 
 		// Setup Bulk manager
-		$manager = new GridFieldBulkManager();
+		$manager = GridFieldBulkManager::create();
         $manager->removeBulkAction("unLink");
         
         $manager->addBulkAction(
@@ -81,10 +98,10 @@ class GridFieldConfig_Catalogue extends GridFieldConfig {
 		// If we are manageing a category, use the relevent field, else
 		// use product
 		if ($classname == "Category") {
-			$this->addComponent(new CatalogueCategoryDetailForm());
+			$this->addComponent(CategoryDetailForm::create());
 			$add_button->setItemRequestClass("CatalogueCategoryDetailForm_ItemRequest");
 		} else {
-			$this->addComponent(new CatalogueEnableDisableDetailForm());
+			$this->addComponent(EnableDisableDetailForm::create());
 			$add_button->setItemRequestClass("CatalogueEnableDisableDetailForm_ItemRequest");
 		}
 

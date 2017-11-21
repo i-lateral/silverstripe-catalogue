@@ -2,6 +2,10 @@
 
 namespace ilateral\SilverStripe\Catalogue\Forms\GridField;
 
+use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+use SilverStripe\Forms\GridField\GridFieldDeleteAction;
+use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+
 /**
  * Allows editing of records contained within the GridField, instead of only allowing the ability to view records in
  * the GridField.
@@ -24,10 +28,10 @@ class GridFieldConfig_CatalogueRelated extends GridFieldConfig_Catalogue {
 		$this->removeComponentsByType('GridFieldDeleteAction');
         $this->removeComponentsByType('GridFieldExportButton');
 
-		$this->addComponent(new GridFieldAddExistingAutocompleter('buttons-before-right'));
-		$this->addComponent(new GridFieldDeleteAction(true));
+		$this->addComponent(GridFieldAddExistingAutocompleter::create('buttons-before-right'));
+		$this->addComponent(GridFieldDeleteAction::create(true));
 		if ($sort_col != false) {
-			$this->addComponent(new GridFieldOrderableRows($sort_col));
+			$this->addComponent(GridFieldOrderableRows::create($sort_col));
 		}
 	}
 }

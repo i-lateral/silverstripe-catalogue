@@ -2,6 +2,13 @@
 
 namespace ilateral\SilverStripe\Catalogue\Forms\GridField;
 
+use SilverStripe\Forms\GridField\GridFieldDetailForm;
+use SilverStripe\Forms\GridField\GridFieldDetailForm_ItemRequest;
+use SilverStripe\Security\Security;
+use SilverStripe\Core\Convert;
+use SilverStripe\Control\Controller;
+use SilverStripe\Forms\FormAction;
+
 /**
  * Base class for editing a catlogue object.
  * 
