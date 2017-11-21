@@ -555,12 +555,12 @@ class CatalogueCategory extends DataObject implements PermissionProvider
         ];
     }
 
-    public function canView($member = false)
+    public function canView($member = null, $context = [])
     {
         return true;
     }
 
-    public function canCreate($member = false)
+    public function canCreate($member = null, $context = [])
     {
         if ($member instanceof Member) {
             $memberID = $member->ID;
@@ -579,7 +579,7 @@ class CatalogueCategory extends DataObject implements PermissionProvider
         return false;
     }
 
-    public function canEdit($member = false)
+    public function canEdit($member = null, $context = [])
     {
         if ($member instanceof Member) {
             $memberID = $member->ID;
@@ -598,7 +598,7 @@ class CatalogueCategory extends DataObject implements PermissionProvider
         return false;
     }
 
-    public function canDelete($member = false)
+    public function canDelete($member = null, $context = [])
     {
         if ($member instanceof Member) {
             $memberID = $member->ID;

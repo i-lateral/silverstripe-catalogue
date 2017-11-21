@@ -736,12 +736,12 @@ class CatalogueProduct extends DataObject implements PermissionProvider
         ];
     }
 
-    public function canView($member = false)
+    public function canView($member = null, $context = [])
     {
         return true;
     }
 
-    public function canCreate($member = null)
+    public function canCreate($member = null, $context = [])
     {
         if ($member instanceof Member) {
             $memberID = $member->ID;
@@ -760,7 +760,7 @@ class CatalogueProduct extends DataObject implements PermissionProvider
         return true;
     }
 
-    public function canEdit($member = null)
+    public function canEdit($member = null, $context = [])
     {
         if ($member instanceof Member) {
             $memberID = $member->ID;
