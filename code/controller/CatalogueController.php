@@ -95,6 +95,24 @@ abstract class CatalogueController extends Controller
     }
 
     /**
+     * If content controller exists, return it's menu function
+     * @param int $level Menu level to return.
+     * @return ArrayList
+     */
+    public function getMenu($level = 1)
+    {
+        if (class_exists(ContentController::class)) {
+            $controller = ContentController::singleton();
+            return $controller->getMenu($level);
+        }
+    }
+
+    public function Menu($level)
+    {
+        return $this->getMenu();
+    }
+
+    /**
      * Process and render search results. This has been hacked a bit to load
      * products into the list (if they exists). Will need to come up with a more
      * elegant solution to dealing with complex searches of objects though.
