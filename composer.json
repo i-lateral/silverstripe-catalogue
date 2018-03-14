@@ -18,7 +18,7 @@
         "silverstripe/framework": ">=3.1",
         "symbiote/silverstripe-gridfieldextensions": "~2.0",
         "colymba/gridfield-bulk-editing-tools": "~2.1",
-        "bummzack/sortablefile": "*"
+        "bummzack/sortablefile": "~1.0"
     },
     "suggest": {
         "silverstripe/cms": "Add full content management support to your site",
