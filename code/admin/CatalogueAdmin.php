@@ -46,23 +46,22 @@ class CatalogueAdmin extends ModelAdmin
         parent::init();
     }
     
+    /**
+     * Expand upon default export fields for products
+     *
+     * @return array
+     */
     public function getExportFields()
     {
-        $fields = array(
-            "Title" => "Title",
-            "URLSegment" => "URLSegment"
-        );
+        $fields = parent::getExportFields();
         
         if ($this->modelClass == 'Product') {
-            $fields["StockID"] = "StockID";
-            $fields["ClassName"] = "Type";
-            $fields["BasePrice"] = "Price";
-            $fields["TaxRate.Amount"] = "TaxPercent";
-            $fields["Images.first.Name"] = "Image1";
-            $fields["Categories.first.Title"] = "Category1";
+            $fields["URLSegment"] = "URLSegment";
             $fields["Content"] = "Content";
+            $fields["StockID"] = "StockID";
+            $fields["Images.first.AbsoluteLink"] = "ImageLink";
         }
-        
+
         $this->extend("updateExportFields", $fields);
         
         return $fields;
@@ -103,6 +102,15 @@ class CatalogueAdmin extends ModelAdmin
                 $this->config()->category_page_length,
                 "Sort"
             ));
+        }
+
+        // Update CSV export
+        $exportButton = $gridField
+            ->getConfig()
+            ->getComponentByType("GridFieldExportButton");
+
+        if ($exportButton) {
+            $exportButton->setExportColumns($this->getExportFields());
         }
 
         // Update list of items for subsite (if used)
