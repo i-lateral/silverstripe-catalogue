@@ -7,7 +7,7 @@
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class CatalogueHelper extends Object
+class CatalogueHelper extends SS_Object
 {
     /**
      * Template names to be removed from the default template list 
