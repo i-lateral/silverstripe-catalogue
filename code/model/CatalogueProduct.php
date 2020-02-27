@@ -755,4 +755,16 @@ class CatalogueProduct extends DataObject implements PermissionProvider
 
         return false;
     }
+    
+    /**
+     * Hides disabled products from googlesitemaps
+     * Only called if googlesitemaps module is installed
+     *
+     * @param [type] $can
+     * @return bool
+     */
+    public function alterCanIncludeInGoogleSitemap(&$can) 
+    {
+        return !$this->Disabled;
+    }
 }
